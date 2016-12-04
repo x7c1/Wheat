@@ -12,7 +12,7 @@ src_managed/
 project/boot/
 project/plugins/project/
 
-# Intellij specifix
+# Intellij specific
 .idea
 
 # Scala-IDE specific
