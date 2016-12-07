@@ -10,4 +10,11 @@ lazy val `wheat-harvest` = project.
     logLevel in assembly := Level.Error,
     libraryDependencies ++= WheatDependencies.forTests
   ).
+  dependsOn(`wheat-parser`).
   enablePlugins(SbtTwirl)
+
+lazy val `wheat-parser` = project.
+  settings(WheatSettings.common:_*).
+  settings(
+    sbtPlugin := true
+  )
