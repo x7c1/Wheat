@@ -18,3 +18,17 @@ lazy val `wheat-parser` = project.
   settings(
     version := "0.1.0"
   )
+
+lazy val `wheat-splicer` = project.
+  settings(forPlugin).
+  settings(
+    version := "0.1.0"
+  )
+
+lazy val `wheat-splicer-assembly` = project.
+  settings(forPlugin).
+  settings(addSbtPlugin(`sbt-assembly`)).
+  settings(
+    version := "0.1.0"
+  ).
+  dependsOn(`wheat-splicer`)
