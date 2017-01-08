@@ -1,20 +1,20 @@
 import sbt.Keys.libraryDependencies
+import WheatDependencies.{`sbt-assembly`, forTests}
+import WheatSettings.forPlugin
+
 
 lazy val `wheat-harvest` = project.
-  settings(WheatSettings.common:_*).
+  settings(forPlugin).
   settings(
     name := "wheat-harvest",
     version := "0.1.0",
-    sbtPlugin := true,
-    logLevel in assembly := Level.Error,
-    libraryDependencies ++= WheatDependencies.forTests
+    libraryDependencies ++= forTests
   ).
   dependsOn(`wheat-parser`).
   enablePlugins(SbtTwirl)
 
 lazy val `wheat-parser` = project.
-  settings(WheatSettings.common:_*).
+  settings(forPlugin).
   settings(
-    version := "0.1.0",
-    sbtPlugin := true
+    version := "0.1.0"
   )
