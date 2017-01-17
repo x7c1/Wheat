@@ -1,10 +1,12 @@
+import bintray.BintrayKeys.bintrayRepository
+import sbt.Def.SettingList
 import sbt.Keys._
 
 object WheatSettings {
 
-  val latestVersion = "2.11.7"
+  lazy val latestVersion = "2.11.7"
 
-  val common = Seq(
+  lazy val common = new SettingList(Seq(
     organization := "x7c1",
     scalacOptions ++= Seq(
       "-deprecation",
@@ -12,6 +14,11 @@ object WheatSettings {
       "-unchecked",
       "-Xlint"
     )
-  )
-
+  ))
+  lazy val forPlugin = new SettingList(common ++ forBintray ++ Seq(
+    sbtPlugin := true
+  ))
+  lazy val forBintray = new SettingList(Seq(
+    bintrayRepository := "android"
+  ))
 }
