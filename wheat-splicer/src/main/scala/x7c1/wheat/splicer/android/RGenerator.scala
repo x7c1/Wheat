@@ -1,7 +1,6 @@
 package x7c1.wheat.splicer.android
 
-import sbt.Process.stringToProcess
-import sbt.{File, Logger}
+import sbt.{File, Logger, Process, richFile}
 
 class RGenerator(
   logger: Logger,
@@ -12,19 +11,17 @@ class RGenerator(
   def generateFrom(resourceDirectories: Seq[File]): Int = {
 
     val dirs = resourceDirectories map
-      (_.getAbsolutePath) map
-      ("-S " + _) mkString " "
+      (_.getAbsolutePath) flatMap
+      (x => Seq("-S", x))
 
-    val command =
-      s"""${sdk.buildTools.getAbsolutePath}/aapt package
-         | --auto-add-overlay
-         | $dirs
-         | -m -J ${sourceDestination.getAbsolutePath}
-         | -M ${manifest.getAbsolutePath}
-         | -I ${sdk.platforms.getAbsolutePath}/android.jar
-         | """.stripMargin
+    val builder = Process apply Seq(
+      (sdk.buildTools / "aapt").getAbsolutePath, "package",
+      "--auto-add-overlay",
+      "-m", "-J", sourceDestination.getAbsolutePath,
+      "-M", manifest.getAbsolutePath,
+      "-I", (sdk.platforms / "android.jar").getAbsolutePath
+    ) ++ dirs
 
-//    logger info command
-    command !< logger
+    builder !< logger
   }
 }
