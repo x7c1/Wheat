@@ -1,11 +1,14 @@
 package x7c1.wheat.splicer.core
 
-import x7c1.wheat.splicer.lib.Extractor.==>
 import sbt.Def.Classpath
 import sbt.Path.richFile
 import sbt.{File, Logger, PathFinder, globFilter, singleFileFinder}
 import x7c1.wheat.splicer.android.{AndroidSdk, RGenerator}
-import x7c1.wheat.splicer.lib.{ArchiveExtractor, Extractor, FileCleaner, Reader}
+import x7c1.wheat.splicer.core.CacheSplicerError.{NotFound, Propagated}
+import x7c1.wheat.splicer.lib.Extractor.==>
+import x7c1.wheat.splicer.lib.LogMessage.{Error, Info}
+import x7c1.wheat.splicer.lib.Reader.LogReader
+import x7c1.wheat.splicer.lib.{ArchiveExtractor, Extractor, FileCleaner, LogMessage, Reader}
 import x7c1.wheat.splicer.maven.{AarCache, ArchiveCache, ArchiveCacheTraverser, FinderError, JarCache}
 
 
@@ -111,27 +114,23 @@ class AarCacheExpander(
     }
   }
 
-  private val traverser = ArchiveCacheTraverser(cacheDirectory)
-
   private val notFound: Seq[File] ==> File = Extractor {
     _ find (!_.exists())
   }
 
   private def resourceDirectories: Either[CacheSplicerError, Seq[File]] = {
-    val caches = traverser.resolve(cache).left map convertError
-    caches.right map toResDirectories match {
-      case Right(notFound(res)) => Left(CacheSplicerError.NotFound(res))
-      case x => x
-    }
-  }
-
-  private def convertError(e: FinderError) = {
-    CacheSplicerError.Messaged(s"${e.getClass.getSimpleName}: ${e.message}")
-  }
-
-  private def toResDirectories(caches: Seq[ArchiveCache]) = {
-    caches collect { case aar: AarCache => aar } map {
+    val collect: Seq[ArchiveCache] => Seq[File] = _ collect {
+      case aar: AarCache => aar
+    } map {
       unmanagedDirectory / _.moduleId.name / "res"
+    }
+    val caches = {
+      val traverser = ArchiveCacheTraverser(cacheDirectory)
+      traverser.resolve(cache).left map (Propagated(_))
+    }
+    caches.right map collect match {
+      case Right(notFound(res)) => Left(NotFound(res))
+      case x => x
     }
   }
 

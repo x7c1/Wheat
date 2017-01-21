@@ -63,5 +63,3 @@ class ArchiveCacheFinder(cacheDirectory: File) {
   }
 
 }
-
-case class FinderError(message: String)
