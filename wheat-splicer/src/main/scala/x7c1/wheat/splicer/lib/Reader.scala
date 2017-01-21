@@ -30,6 +30,17 @@ object Reader {
     }
   }
 
+  implicit class RichEitherReader[L: HasLogMessage, R: HasLogMessage](
+    reader: Reader[Logger, Either[L, R]]) {
+
+    def asLoggerApplied: Reader[Logger, Unit] = {
+      reader map {
+        case Right(right) => implicitly[HasLogMessage[R]] messageOf right
+        case Left(left) => implicitly[HasLogMessage[L]] messageOf left
+      } flatMap (_.toReader)
+    }
+  }
+
   implicit def forLogger[A](reader: Reader[Logger, A]): Initialize[Task[A]] = {
     Def task {
       val logger = sbt.Keys.streams.value.log

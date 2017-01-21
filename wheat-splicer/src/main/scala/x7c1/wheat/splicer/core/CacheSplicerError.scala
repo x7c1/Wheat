@@ -1,7 +1,8 @@
 package x7c1.wheat.splicer.core
 
 import sbt.File
-import x7c1.wheat.splicer.lib.HasMessage
+import x7c1.wheat.splicer.lib.LogMessage.Error
+import x7c1.wheat.splicer.lib.{HasLogMessage, HasMessage, LogMessage}
 
 
 sealed trait CacheSplicerError {
@@ -20,6 +21,10 @@ object CacheSplicerError {
 
   case class Unexpected(cause: Exception) extends CacheSplicerError {
     override def message: String = cause.getMessage
+  }
+
+  implicit object hasLogMessage extends HasLogMessage[CacheSplicerError] {
+    override def messageOf(x: CacheSplicerError): LogMessage = Error(x.message)
   }
 
 }

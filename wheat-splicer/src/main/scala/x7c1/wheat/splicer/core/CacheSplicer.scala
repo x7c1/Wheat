@@ -8,8 +8,8 @@ import x7c1.wheat.splicer.core.CacheSplicerError.{NotFound, Propagated}
 import x7c1.wheat.splicer.lib.Extractor.==>
 import x7c1.wheat.splicer.lib.LogMessage.{Error, Info}
 import x7c1.wheat.splicer.lib.Reader.LogReader
-import x7c1.wheat.splicer.lib.{ArchiveExtractor, Extractor, FileCleaner, LogMessage, Reader}
-import x7c1.wheat.splicer.maven.{AarCache, ArchiveCache, ArchiveCacheTraverser, FinderError, JarCache}
+import x7c1.wheat.splicer.lib.{ArchiveExtractor, Extractor, FileCleaner, HasLogMessage, Reader}
+import x7c1.wheat.splicer.maven.{AarCache, ArchiveCache, ArchiveCacheTraverser, JarCache}
 
 
 sealed trait CacheSplicer {
@@ -89,14 +89,14 @@ class AarCacheExpander(
   }
 
   override def setupSources = {
-    val either = for {
+    val setup = LogReader(logger => for {
       _ <- mkdirs(sourceDestination).right
       dirs <- resourceDirectories.right
     } yield {
       val generator = RGenerator(sdk, manifest, sourceDestination)
-      generator generateFrom dirs
-    }
-    def toMessage: Int => LogMessage = {
+      generator.generateFrom(dirs) !< logger
+    })
+    implicit val toMessage = HasLogMessage[Int] {
       case 0 => (sourceDestination ** "*.java").get match {
         case files if files.nonEmpty =>
           Info(files map (s"[done] generated -> " + _): _*)
@@ -106,12 +106,7 @@ class AarCacheExpander(
       case n =>
         Error(s"(code:$n) failed to generate R.java: ${cache.moduleId}")
     }
-    either match {
-      case Left(e) =>
-        LogReader(_ error e.message)
-      case Right(builder) =>
-        LogReader(builder !< _) map toMessage flatMap (_.toReader)
-    }
+    setup.asLoggerApplied
   }
 
   private val notFound: Seq[File] ==> File = Extractor {
