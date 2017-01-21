@@ -37,4 +37,6 @@ object Reader {
     }
   }
 
+  def LogReader[A](f: Logger => A): Reader[Logger, A] = Reader(f)
+
 }

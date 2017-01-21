@@ -85,25 +85,30 @@ class AarCacheExpander(
     either.left foreach (logger error _.message)
   }
 
-  override def setupSources = Reader { logger =>
+  override def setupSources = {
     val either = for {
       _ <- mkdirs(sourceDestination).right
       dirs <- resourceDirectories.right
-      code <- {
-        val generator = new RGenerator(logger, sdk, manifest, sourceDestination)
-        Right(generator generateFrom dirs).right
-      }
-    } yield code match {
+    } yield {
+      val generator = RGenerator(sdk, manifest, sourceDestination)
+      generator generateFrom dirs
+    }
+    def toMessage: Int => LogMessage = {
       case 0 => (sourceDestination ** "*.java").get match {
         case files if files.nonEmpty =>
-          files foreach (logger info s"[done] generated -> " + _)
+          Info(files map (s"[done] generated -> " + _): _*)
         case none =>
-          logger info s"[done] no output: ${cache.moduleId}"
+          Info(s"[done] no output: ${cache.moduleId}")
       }
       case n =>
-        logger error s"(code:$n) failed to generate R.java: ${cache.moduleId}"
+        Error(s"(code:$n) failed to generate R.java: ${cache.moduleId}")
     }
-    either.left foreach (logger error _.message)
+    either match {
+      case Left(e) =>
+        LogReader(_ error e.message)
+      case Right(builder) =>
+        LogReader(builder !< _) map toMessage flatMap (_.toReader)
+    }
   }
 
   private val traverser = ArchiveCacheTraverser(cacheDirectory)
