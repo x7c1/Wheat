@@ -33,7 +33,7 @@ class CacheSplicers private(sdk: AndroidSdk, splicers: Seq[CacheSplicer]) {
 
 object CacheSplicers {
 
-  class Factory(cacheDirectory: File, unmanagedDirectory: File, sdk: AndroidSdk) {
+  class Factory(unmanagedDirectory: File, sdk: AndroidSdk) {
 
     def create(dependencies: Seq[String]): CacheSplicers = {
       val create = new CacheSplicer.Factory(cacheDirectory, unmanagedDirectory, sdk)
@@ -43,6 +43,8 @@ object CacheSplicers {
         splicers = filter(caches) map create.fromCache
       )
     }
+
+    private val cacheDirectory = sdk.`android-m2repository`
 
     private val finder = new ArchiveCacheFinder(cacheDirectory)
 

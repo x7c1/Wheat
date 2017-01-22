@@ -11,6 +11,8 @@ trait AndroidSdk {
   def platforms: File
 
   def extras: File
+
+  def `android-m2repository`: File
 }
 
 object AndroidSdk {
@@ -40,6 +42,11 @@ object AndroidSdk {
     root: File,
     buildTools: File,
     platforms: File,
-    extras: File) extends AndroidSdk
+    extras: File) extends AndroidSdk {
+
+    override val `android-m2repository`: File = {
+      validate(extras / "android" / "m2repository")
+    }
+  }
 
 }
