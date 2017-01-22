@@ -72,20 +72,20 @@ class AarCacheExpander(
     Seq(sourceDestination.getAbsoluteFile)
   }
 
-  override def setupJars = Reader { logger =>
-    val either = for {
+  override def setupJars = {
+    val setup = LogReader(logger => for {
       _ <- mkdirs(destination).right
-      code <- {
-        val extractor = ArchiveExtractor(logger, destination)
-        Right(extractor unzip cache.file).right
-      }
-    } yield code match {
+      extractor <- Right(ArchiveExtractor(destination)).right
+    } yield {
+      extractor.unzip(cache.file) !< logger
+    })
+    implicit val toMessage = HasLogMessage[Int] {
       case 0 =>
-        logger info s"[done] ${cache.moduleId} expanded -> $destination"
+        Info(s"[done] ${cache.moduleId} expanded -> $destination")
       case n =>
-        logger error s"(code:$n) failed to extract ${cache.file}"
+        Error(s"(code:$n) failed to extract ${cache.file}")
     }
-    either.left foreach (logger error _.message)
+    setup.asLoggerApplied
   }
 
   override def setupSources = {
