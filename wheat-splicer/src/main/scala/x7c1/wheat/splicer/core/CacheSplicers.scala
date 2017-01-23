@@ -1,8 +1,7 @@
 package x7c1.wheat.splicer.core
 
 import sbt.Def.Classpath
-import sbt.{Attributed, File, Logger, ModuleID, globFilter, singleFileFinder}
-
+import sbt.{Attributed, File, ModuleID, ProcessLogger, globFilter, singleFileFinder}
 import x7c1.wheat.splicer.android.AndroidSdk
 import x7c1.wheat.splicer.lib.{ModuleIdFactory, Reader}
 import x7c1.wheat.splicer.maven.{ArchiveCache, ArchiveCacheFinder, ArchiveCacheTraverser}
@@ -10,12 +9,12 @@ import x7c1.wheat.splicer.maven.{ArchiveCache, ArchiveCacheFinder, ArchiveCacheT
 
 class CacheSplicers private(sdk: AndroidSdk, splicers: Seq[CacheSplicer]) {
 
-  def expandAll: Reader[Logger, Unit] = {
+  def expandAll: Reader[ProcessLogger, Unit] = {
     val readers = splicers.map(_.setupJars) ++ splicers.map(_.setupSources)
     readers.uniteAll
   }
 
-  def cleanAll: Reader[Logger, Unit] = {
+  def cleanAll: Reader[ProcessLogger, Unit] = {
     val readers = splicers.map(_.clean)
     readers.uniteAll
   }

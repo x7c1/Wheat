@@ -1,6 +1,6 @@
 package x7c1.wheat.splicer.lib
 
-import sbt.Logger
+import sbt.ProcessLogger
 
 import scala.language.implicitConversions
 
@@ -19,7 +19,7 @@ object LogMessage {
   }
 
   implicit class ReaderLike(message: LogMessage) {
-    def toReader: Reader[Logger, Unit] = Reader { logger =>
+    def toReader: Reader[ProcessLogger, Unit] = Reader { logger =>
       message match {
         case _: Error => message.messages foreach (logger.error(_))
         case _: Info => message.messages foreach (logger.info(_))

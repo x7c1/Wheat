@@ -1,7 +1,7 @@
 package x7c1.wheat.splicer.lib
 
 import sbt.Def.Initialize
-import sbt.{Def, Logger, Task}
+import sbt.{Def, ProcessLogger, Task}
 
 case class Reader[X, A](run: X => A) {
   def map[B](f: A => B): Reader[X, B] = {
@@ -31,9 +31,9 @@ object Reader {
   }
 
   implicit class RichEitherReader[L: HasLogMessage, R: HasLogMessage](
-    reader: Reader[Logger, Either[L, R]]) {
+    reader: Reader[ProcessLogger, Either[L, R]]) {
 
-    def asLoggerApplied: Reader[Logger, Unit] = {
+    def asLoggerApplied: Reader[ProcessLogger, Unit] = {
       reader map {
         case Right(right) => implicitly[HasLogMessage[R]] messageOf right
         case Left(left) => implicitly[HasLogMessage[L]] messageOf left
@@ -41,13 +41,13 @@ object Reader {
     }
   }
 
-  implicit def forLogger[A](reader: Reader[Logger, A]): Initialize[Task[A]] = {
+  implicit def forLogger[A](reader: Reader[ProcessLogger, A]): Initialize[Task[A]] = {
     Def task {
       val logger = sbt.Keys.streams.value.log
       reader run logger
     }
   }
 
-  def LogReader[A](f: Logger => A): Reader[Logger, A] = Reader(f)
+  def LogReader[A](f: ProcessLogger => A): Reader[ProcessLogger, A] = Reader(f)
 
 }

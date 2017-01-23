@@ -2,7 +2,7 @@ package x7c1.wheat.splicer.core
 
 import sbt.Def.Classpath
 import sbt.Path.richFile
-import sbt.{File, Logger, PathFinder, globFilter, singleFileFinder}
+import sbt.{File, PathFinder, ProcessLogger, globFilter, singleFileFinder}
 import x7c1.wheat.splicer.android.{AndroidSdk, RGenerator}
 import x7c1.wheat.splicer.core.CacheSplicerError.{NotFound, Propagated}
 import x7c1.wheat.splicer.lib.Extractor.==>
@@ -14,11 +14,11 @@ import x7c1.wheat.splicer.maven.{AarCache, ArchiveCache, ArchiveCacheTraverser, 
 
 sealed trait CacheSplicer {
 
-  def setupJars: Reader[Logger, Unit]
+  def setupJars: Reader[ProcessLogger, Unit]
 
-  def setupSources: Reader[Logger, Unit]
+  def setupSources: Reader[ProcessLogger, Unit]
 
-  def clean: Reader[Logger, Unit]
+  def clean: Reader[ProcessLogger, Unit]
 
   def loadClasspath: Classpath
 
