@@ -1,6 +1,9 @@
 *.class
 *.log
 
+sample-splicer-client/libs-expanded
+sample-splicer-client/local.properties
+
 # sbt specific
 .cache
 .history
