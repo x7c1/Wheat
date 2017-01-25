@@ -4,7 +4,7 @@ object Tap {
 
   object implicits {
 
-    implicit class Provider[A](target: A) {
+    implicit class Provider[A](val target: A) extends AnyVal {
       def tap(f: (A => Unit)*): A = {
         f foreach (_ (target))
         target
