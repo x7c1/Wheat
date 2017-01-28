@@ -8,17 +8,13 @@ import org.slf4j
 import x7c1.wheat.splicer.core.logger.Tap.implicits.Provider
 
 
-object Logger {
-  def apply[A](x: A)(implicit create: A => slf4j.Logger): slf4j.Logger = {
-    create(x)
-  }
-}
+object Logger extends FactoryFor[slf4j.Logger]
 
 trait LoggerFactory[X] {
 
-  def appender: core.Appender[ILoggingEvent]
+  val appender: core.Appender[ILoggingEvent]
 
-  def level: Level
+  val level: Level
 
   implicit def createLogger[A <: X]: Class[A] => slf4j.Logger = {
     klass =>
