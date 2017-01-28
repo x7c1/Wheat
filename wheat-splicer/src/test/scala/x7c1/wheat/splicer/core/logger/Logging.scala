@@ -5,18 +5,20 @@ import sbt.ProcessLogger
 
 
 trait Logging {
-  lazy val logger: ProcessLogger = LoggerWrapper(Logger(getClass))
+  lazy val logger: ProcessLogger = LoggerWrapper(Logging(getClass))
 }
 
-object Logging extends LoggerFactory[Logging] {
+object Logging extends LoggerFactory {
 
-  override lazy val appender =
-    Appender from RollingFileSetting(
+  override lazy val level = Level.DEBUG
+
+  override lazy val appenders = Seq(
+    CoreAppender apply RollingFileSetting(
       encoderPattern = """%d{yyyy-MM-dd'T'HH:mm:ss'Z'} [%thread] %level %logger{0} - %msg \(%file:%line\)%n""",
       fileName = "logs/app.log",
       fileNamePattern = "logs/app.%d{yyyy-MM-dd}.log",
       maxHistory = 7
     )
+  )
 
-  override lazy val level = Level.DEBUG
 }
