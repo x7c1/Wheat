@@ -22,11 +22,12 @@ object AndroidSdk {
     buildToolsVersion: String,
     compileSdkVersion: Int): AndroidSdk = {
 
+    val root = validate(sdkRoot).getCanonicalFile
     AndroidSdkImpl(
-      root = validate(sdkRoot),
-      buildTools = validate(sdkRoot / "build-tools" / buildToolsVersion),
-      platforms = validate(sdkRoot / "platforms" / s"android-$compileSdkVersion"),
-      extras = validate(sdkRoot / "extras")
+      root = root,
+      buildTools = validate(root / "build-tools" / buildToolsVersion),
+      platforms = validate(root / "platforms" / s"android-$compileSdkVersion"),
+      extras = validate(root / "extras")
     )
   }
 

@@ -35,7 +35,7 @@ object CacheSplicers {
   class Factory(unmanagedDirectory: File, sdk: AndroidSdk) {
 
     def create(dependencies: Seq[String]): CacheSplicers = {
-      val create = new CacheSplicer.Factory(cacheDirectory, unmanagedDirectory, sdk)
+      val create = new CacheSplicer.Factory(cacheDirectory, unmanagedDirectory.getCanonicalFile, sdk)
       val caches = dependencies map ModuleIdFactory.create map toCache
       new CacheSplicers(
         sdk = sdk,
