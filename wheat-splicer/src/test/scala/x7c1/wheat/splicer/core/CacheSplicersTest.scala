@@ -1,5 +1,6 @@
 package x7c1.wheat.splicer.core
 
+import org.scalatest.matchers.{MatchResult, Matcher}
 import org.scalatest.{BeforeAndAfterAll, FlatSpecLike, Matchers}
 import sbt.{file, globFilter, richFile, singleFileFinder}
 import x7c1.wheat.splicer.android.AndroidSdk
@@ -24,9 +25,7 @@ class CacheSplicersTest extends FlatSpecLike
       unmanaged / "recyclerview-v7/src-generated/android/support/v7/recyclerview/R.java"
     )
     val actualPaths = splicers.sourceDirectories.map(_ ** "R.java").flatMap(_.getPaths)
-    expected.map(_.getPath) foreach { path =>
-      actualPaths should contain(path)
-    }
+    actualPaths should containAllOf(expected map (_.absolutePath))
   }
 
   ".classpath" must "contain .jar files extracted from .aar files" in {
@@ -42,9 +41,7 @@ class CacheSplicersTest extends FlatSpecLike
       unmanaged / "recyclerview-v7/classes.jar"
     )
     val actualPaths = splicers.classpath.map(_.data.absolutePath)
-    expected.map(_.getPath) foreach { path =>
-      actualPaths should contain(path)
-    }
+    actualPaths should containAllOf(expected map (_.absolutePath))
   }
 
   it must "contain existing .jar files" in {
@@ -56,8 +53,20 @@ class CacheSplicersTest extends FlatSpecLike
         "23.4.0/support-annotations-23.4.0.jar"
     )
     val actualPaths = splicers.classpath.map(_.data.absolutePath)
-    expected.map(_.getPath) foreach { path =>
-      actualPaths should contain(path)
+    actualPaths should containAllOf(expected map (_.absolutePath))
+  }
+
+  def containAllOf(actual: Seq[String]): Matcher[Seq[String]] = {
+    Matcher { expected =>
+      val unknown = actual.find(!expected.contains(_))
+      val toMessage = (name: String) => {
+        (Seq(name, "is not included in") ++ expected).mkString("\n")
+      }
+      MatchResult(
+        matches = unknown.isEmpty,
+        rawFailureMessage = unknown map toMessage getOrElse "not found",
+        rawNegatedFailureMessage = "all items matched"
+      )
     }
   }
 
