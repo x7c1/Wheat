@@ -12,6 +12,10 @@ object Logging extends LoggerFactory {
 
   override lazy val level = Level.DEBUG
 
+  override def frameworkPackages = Seq(
+    classOf[LoggerWrapper].getPackage.getName
+  )
+
   override lazy val appenderFactories = Seq(
     CoreAppender from RollingFileSetting(
       encoderPattern = """%d{yyyy-MM-dd'T'HH:mm:ss'Z'} [%thread] %level %logger{0} - %msg \(%file:%line\)%n""",

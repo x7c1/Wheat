@@ -14,7 +14,7 @@ trait LoggerFactory {
     slf4j.LoggerFactory.getILoggerFactory.asInstanceOf[LoggerContext] tap { x =>
       val util = new ContextUtil(x)
       val add = util.addFrameworkPackage(x.getFrameworkPackages, _: String)
-      Seq(getClass.getPackage.getName) foreach add
+      (frameworkPackages :+ getClass.getPackage.getName) foreach add
     }
 
   val appenderFactories: Seq[LoggerContext => core.Appender[ILoggingEvent]]
@@ -24,6 +24,8 @@ trait LoggerFactory {
   }
 
   def level: Level
+
+  def frameworkPackages: Seq[String] = Seq()
 
   def apply[X](klass: Class[X]): slf4j.Logger = {
     slf4j.LoggerFactory.getLogger(klass).asInstanceOf[classic.Logger].tap(
