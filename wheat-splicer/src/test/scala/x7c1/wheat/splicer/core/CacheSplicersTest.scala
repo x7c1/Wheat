@@ -1,6 +1,5 @@
 package x7c1.wheat.splicer.core
 
-import org.scalatest.matchers.{MatchResult, Matcher}
 import org.scalatest.{BeforeAndAfterAll, FlatSpecLike, Matchers}
 import sbt.{file, globFilter, richFile, singleFileFinder}
 import x7c1.wheat.splicer.android.AndroidSdk
@@ -8,7 +7,7 @@ import x7c1.wheat.splicer.android.PropertyLoader.{buildToolsVersion, compileSdkV
 import x7c1.wheat.splicer.core.logger.Logging
 
 class CacheSplicersTest extends FlatSpecLike
-  with Matchers with BeforeAndAfterAll with Logging with SplicerSettings {
+  with Matchers with BeforeAndAfterAll with Logging with SplicerSettings with CustomMatchers {
 
   override protected def beforeAll(): Unit = {
     splicers.cleanAll run logger
@@ -54,20 +53,6 @@ class CacheSplicersTest extends FlatSpecLike
     )
     val actualPaths = splicers.classpath.map(_.data.absolutePath)
     actualPaths should containAllOf(expected map (_.absolutePath))
-  }
-
-  def containAllOf(actual: Seq[String]): Matcher[Seq[String]] = {
-    Matcher { expected =>
-      val unknown = actual.find(!expected.contains(_))
-      val toMessage = (name: String) => {
-        (Seq(name, "is not included in") ++ expected).mkString("\n")
-      }
-      MatchResult(
-        matches = unknown.isEmpty,
-        rawFailureMessage = unknown map toMessage getOrElse "not found",
-        rawNegatedFailureMessage = "all items matched"
-      )
-    }
   }
 
 }
