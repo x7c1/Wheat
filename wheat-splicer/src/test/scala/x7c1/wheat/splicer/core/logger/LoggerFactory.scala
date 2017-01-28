@@ -17,7 +17,7 @@ trait LoggerFactory {
       (frameworkPackages :+ getClass.getPackage.getName) foreach add
     }
 
-  val appenderFactories: Seq[LoggerContext => core.Appender[ILoggingEvent]]
+  val appenderFactories: Seq[Appender.Factory]
 
   lazy val appenders: Seq[core.Appender[ILoggingEvent]] = {
     appenderFactories.map(_ (context))
@@ -37,11 +37,13 @@ trait LoggerFactory {
 
 }
 
-object CoreAppender {
+object Appender {
 
-  type From[X] = X => LoggerContext => core.Appender[ILoggingEvent]
+  type Factory = LoggerContext => core.Appender[ILoggingEvent]
 
-  def from[X: From](x: X): LoggerContext => core.Appender[ILoggingEvent] = {
+  type From[X] = X => Factory
+
+  def from[X: From](x: X): Factory = {
     implicitly[From[X]] apply x
   }
 }

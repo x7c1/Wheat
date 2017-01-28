@@ -17,7 +17,7 @@ object Logging extends LoggerFactory {
   )
 
   override lazy val appenderFactories = Seq(
-    CoreAppender from RollingFileSetting(
+    Appender from RollingFileSetting(
       encoderPattern = """%d{yyyy-MM-dd'T'HH:mm:ss'Z'} [%thread] %level %logger{0} - %msg \(%file:%line\)%n""",
       fileName = "logs/app.log",
       fileNamePattern = "logs/app.%d{yyyy-MM-dd}.log",

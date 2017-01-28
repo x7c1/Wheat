@@ -15,7 +15,7 @@ case class RollingFileSetting(
 
 object RollingFileSetting {
 
-  implicit def createAppender: CoreAppender.From[RollingFileSetting] = {
+  implicit def createAppender: Appender.From[RollingFileSetting] = {
     setting => context =>
       val encoder = new PatternLayoutEncoder().tap(
         _ setPattern setting.encoderPattern,
