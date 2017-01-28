@@ -8,7 +8,7 @@ import org.slf4j
 import x7c1.wheat.splicer.core.logger.Tap.implicits.Provider
 
 
-object Logger extends FactoryFor[slf4j.Logger]
+object Logger extends FactoryInferable[slf4j.Logger]
 
 trait LoggerFactory[X] {
 
