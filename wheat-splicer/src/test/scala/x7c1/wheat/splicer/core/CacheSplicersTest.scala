@@ -29,10 +29,37 @@ class CacheSplicersTest extends FlatSpecLike
     }
   }
 
+  ".classpath" must "contain .jar files extracted from .aar files" in {
+    val expected = Seq(
+      unmanaged / "recyclerview-v7/classes.jar",
+      unmanaged / "appcompat-v7/classes.jar",
+      unmanaged / "design/classes.jar",
+      unmanaged / "cardview-v7/classes.jar",
+      unmanaged / "support-v4/classes.jar",
+      unmanaged / "support-v4/libs/internal_impl-23.4.0.jar",
+      unmanaged / "animated-vector-drawable/classes.jar",
+      unmanaged / "support-vector-drawable/classes.jar",
+      unmanaged / "recyclerview-v7/classes.jar"
     )
-    val splicers = factory create (dependencies fromResource "/target.gradle")
+    val actualPaths = splicers.classpath.map(_.data.absolutePath)
+    expected.map(_.getPath) foreach { path =>
+      actualPaths should contain(path)
+    }
+  }
 
-    println(splicers.sourceDirectories)
+  it must "contain existing .jar files" in {
+    val expected = Seq(
+      sdk.platforms / "android.jar",
+      sdk.platforms / "uiautomator.jar",
+      sdk.`android-m2repository` /
+        "com/android/support/support-annotations" /
+        "23.4.0/support-annotations-23.4.0.jar"
+    )
+    val actualPaths = splicers.classpath.map(_.data.absolutePath)
+    expected.map(_.getPath) foreach { path =>
+      actualPaths should contain(path)
+    }
+  }
 
 }
 
