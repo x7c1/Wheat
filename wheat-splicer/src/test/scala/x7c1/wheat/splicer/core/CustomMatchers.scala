@@ -8,7 +8,8 @@ trait CustomMatchers {
     Matcher { actual =>
       val unknown = expected.find(!actual.contains(_))
       val toMessage = (name: A) => {
-        (Seq(asString from name, "is not included in") ++ actual).mkString("\n")
+        val first = Seq(asString from name, "is not included in")
+        first ++ (actual map asString.from) mkString "\n"
       }
       MatchResult(
         matches = unknown.isEmpty,
