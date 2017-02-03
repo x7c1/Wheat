@@ -1,21 +1,24 @@
 package x7c1.wheat.splicer.core
 
-import x7c1.wheat.splicer.lib.Extractor.==>
 import sbt.Def.Classpath
 import sbt.Path.richFile
-import sbt.{File, Logger, PathFinder, globFilter, singleFileFinder}
+import sbt.{File, PathFinder, ProcessLogger, globFilter, singleFileFinder}
 import x7c1.wheat.splicer.android.{AndroidSdk, RGenerator}
-import x7c1.wheat.splicer.lib.{ArchiveExtractor, Extractor, FileCleaner, Reader}
-import x7c1.wheat.splicer.maven.{AarCache, ArchiveCache, ArchiveCacheTraverser, FinderError, JarCache}
+import x7c1.wheat.splicer.core.CacheSplicerError.{NotFound, Propagated}
+import x7c1.wheat.splicer.lib.Extractor.==>
+import x7c1.wheat.splicer.lib.LogMessage.{Error, Info}
+import x7c1.wheat.splicer.lib.Reader.LogReader
+import x7c1.wheat.splicer.lib.{ArchiveExtractor, Extractor, FileCleaner, HasLogMessage, Reader}
+import x7c1.wheat.splicer.maven.{AarCache, ArchiveCache, ArchiveCacheTraverser, JarCache}
 
 
 sealed trait CacheSplicer {
 
-  def setupJars: Reader[Logger, Unit]
+  def setupJars: Reader[ProcessLogger, Unit]
 
-  def setupSources: Reader[Logger, Unit]
+  def setupSources: Reader[ProcessLogger, Unit]
 
-  def clean: Reader[Logger, Unit]
+  def clean: Reader[ProcessLogger, Unit]
 
   def loadClasspath: Classpath
 
@@ -58,75 +61,71 @@ class AarCacheExpander(
   }
 
   override def loadClasspath = {
-    val dirs = Seq(
-      destination / "classes.jar",
-      destination / "libs" / "*.jar"
+    val finders = Seq(
+      PathFinder(destination / "classes.jar"),
+      destination / "libs" * "*.jar"
     )
-    dirs.foldLeft(PathFinder.empty)(_ +++ _).classpath
+    finders.foldLeft(PathFinder.empty)(_ +++ _).classpath
   }
 
   override def sourceDirectories = {
     Seq(sourceDestination.getAbsoluteFile)
   }
 
-  override def setupJars = Reader { logger =>
-    val either = for {
+  override def setupJars = {
+    val setup = LogReader(logger => for {
       _ <- mkdirs(destination).right
-      code <- {
-        val extractor = ArchiveExtractor(logger, destination)
-        Right(extractor unzip cache.file).right
-      }
-    } yield code match {
+      extractor <- Right(ArchiveExtractor(destination)).right
+    } yield {
+      extractor.unzip(cache.file) !< logger
+    })
+    implicit val toMessage = HasLogMessage[Int] {
       case 0 =>
-        logger info s"[done] ${cache.moduleId} expanded -> $destination"
+        Info(s"[done] ${cache.moduleId} expanded -> $destination")
       case n =>
-        logger error s"(code:$n) failed to extract ${cache.file}"
+        Error(s"(code:$n) failed to extract ${cache.file}")
     }
-    either.left foreach (logger error _.message)
+    setup.asLoggerApplied
   }
 
-  override def setupSources = Reader { logger =>
-    val either = for {
+  override def setupSources = {
+    val setup = LogReader(logger => for {
       _ <- mkdirs(sourceDestination).right
       dirs <- resourceDirectories.right
-      code <- {
-        val generator = new RGenerator(logger, sdk, manifest, sourceDestination)
-        Right(generator generateFrom dirs).right
-      }
-    } yield code match {
+    } yield {
+      val generator = RGenerator(sdk, manifest, sourceDestination)
+      generator.generateFrom(dirs) !< logger
+    })
+    implicit val toMessage = HasLogMessage[Int] {
       case 0 => (sourceDestination ** "*.java").get match {
         case files if files.nonEmpty =>
-          files foreach (logger info s"[done] generated -> " + _)
+          Info(files map (s"[done] generated -> " + _): _*)
         case none =>
-          logger info s"[done] no output: ${cache.moduleId}"
+          Info(s"[done] no output: ${cache.moduleId}")
       }
       case n =>
-        logger error s"(code:$n) failed to generate R.java: ${cache.moduleId}"
+        Error(s"(code:$n) failed to generate R.java: ${cache.moduleId}")
     }
-    either.left foreach (logger error _.message)
+    setup.asLoggerApplied
   }
-
-  private val traverser = ArchiveCacheTraverser(cacheDirectory)
 
   private val notFound: Seq[File] ==> File = Extractor {
     _ find (!_.exists())
   }
 
   private def resourceDirectories: Either[CacheSplicerError, Seq[File]] = {
-    val caches = traverser.resolve(cache).left map convertError
-    caches.right map toResDirectories match {
-      case Right(notFound(res)) => Left(CacheSplicerError.NotFound(res))
-      case x => x
-    }
-  }
-
-  private def convertError(e: FinderError) = {
-    CacheSplicerError.Messaged(s"${e.getClass.getSimpleName}: ${e.message}")
-  }
-
-  private def toResDirectories(caches: Seq[ArchiveCache]) = {
-    caches collect { case aar: AarCache => aar } map {
+    val collect: Seq[ArchiveCache] => Seq[File] = _ collect {
+      case aar: AarCache => aar
+    } map {
       unmanagedDirectory / _.moduleId.name / "res"
+    }
+    val caches = {
+      val traverser = ArchiveCacheTraverser(cacheDirectory)
+      traverser.resolve(cache).left map (Propagated(_))
+    }
+    caches.right map collect match {
+      case Right(notFound(res)) => Left(NotFound(res))
+      case x => x
     }
   }
 

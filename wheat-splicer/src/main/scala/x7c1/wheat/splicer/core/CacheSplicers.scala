@@ -1,8 +1,7 @@
 package x7c1.wheat.splicer.core
 
 import sbt.Def.Classpath
-import sbt.{Attributed, File, Logger, ModuleID, globFilter, singleFileFinder}
-
+import sbt.{Attributed, File, ModuleID, ProcessLogger, globFilter, singleFileFinder}
 import x7c1.wheat.splicer.android.AndroidSdk
 import x7c1.wheat.splicer.lib.{ModuleIdFactory, Reader}
 import x7c1.wheat.splicer.maven.{ArchiveCache, ArchiveCacheFinder, ArchiveCacheTraverser}
@@ -10,12 +9,12 @@ import x7c1.wheat.splicer.maven.{ArchiveCache, ArchiveCacheFinder, ArchiveCacheT
 
 class CacheSplicers private(sdk: AndroidSdk, splicers: Seq[CacheSplicer]) {
 
-  def expandAll: Reader[Logger, Unit] = {
+  def expandAll: Reader[ProcessLogger, Unit] = {
     val readers = splicers.map(_.setupJars) ++ splicers.map(_.setupSources)
     readers.uniteAll
   }
 
-  def cleanAll: Reader[Logger, Unit] = {
+  def cleanAll: Reader[ProcessLogger, Unit] = {
     val readers = splicers.map(_.clean)
     readers.uniteAll
   }
@@ -33,16 +32,22 @@ class CacheSplicers private(sdk: AndroidSdk, splicers: Seq[CacheSplicer]) {
 
 object CacheSplicers {
 
-  class Factory(cacheDirectory: File, unmanagedDirectory: File, sdk: AndroidSdk) {
+  class Factory(unmanagedDirectory: File, sdk: AndroidSdk) {
 
     def create(dependencies: Seq[String]): CacheSplicers = {
-      val create = new CacheSplicer.Factory(cacheDirectory, unmanagedDirectory, sdk)
+      val create = new CacheSplicer.Factory(
+        cacheDirectory = cacheDirectory,
+        unmanagedDirectory = unmanagedDirectory.getCanonicalFile,
+        sdk = sdk
+      )
       val caches = dependencies map ModuleIdFactory.create map toCache
       new CacheSplicers(
         sdk = sdk,
         splicers = filter(caches) map create.fromCache
       )
     }
+
+    private val cacheDirectory = sdk.`android-m2repository`
 
     private val finder = new ArchiveCacheFinder(cacheDirectory)
 

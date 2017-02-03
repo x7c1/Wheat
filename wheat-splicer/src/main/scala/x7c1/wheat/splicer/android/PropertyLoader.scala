@@ -1,52 +1,31 @@
 package x7c1.wheat.splicer.android
 
+import sbt.File
+import sbt.complete.DefaultParsers._
 import sbt.complete.Parser
-import sbt.{File, IO}
-import x7c1.wheat.splicer.lib.Extractor
-import x7c1.wheat.splicer.lib.Extractor.==>
-
-import scala.io.Source
 
 
 object PropertyLoader {
 
-  import sbt.complete.DefaultParsers._
+  object sdkRoot extends LinedProperty[File](
+    parser = _ ~> "=" ~> NotSpace,
+    property = "sdk.dir"
+  )
 
-  object sdkRoot {
-    def via(localProperties: File): File = {
-      new File(loadPath(localProperties))
-    }
+  object buildToolsVersion extends LinedProperty[String](
+    parser = Space ~> _ ~> Space ~> quoted,
+    property = "buildToolsVersion"
+  )
 
-    private def loadPath(localProperties: File): String = {
-      val lines = Source.fromFile(localProperties).getLines()
-      val regex = "^sdk.dir=(.*)".r
-      lines collectFirst { case regex(path) => path } getOrElse {
-        throw new IllegalStateException("sdk.dir not found")
-      }
-    }
+  object compileSdkVersion extends LinedProperty[Int](
+    parser = Space ~> _ ~> Space ~> Digit.+.string,
+    property = "compileSdkVersion"
+  )
 
-  }
-
-  object buildToolsVersion {
-    def via(file: File): String = {
-      val parser = quoted
-      Loader(file, parser).requireSingle("buildToolsVersion")
-    }
-  }
-
-  object compileSdkVersion {
-    def via(file: File): Int = {
-      val parser = Digit.+.string
-      Loader(file, parser).requireSingle("compileSdkVersion").toInt
-    }
-  }
-
-  object dependencies {
-    def via(file: File): Seq[String] = {
-      val parser = quoted
-      Loader(file, parser) loadMultiple "compile"
-    }
-  }
+  object dependencies extends LinedProperty[Seq[String]](
+    parser = Space ~> _ ~> Space ~> quoted,
+    property = "compile"
+  )
 
   private val quoted = {
     val quoted1 = "'" ~> NotSpace <~ "'"
@@ -54,31 +33,22 @@ object PropertyLoader {
     quoted1 | quoted2
   }
 
-  private case class Loader(file: File, target: Parser[String]) {
+}
 
-    def requireSingle(property: String): String = {
-      loadMultiple(property) match {
-        case x +: Seq() => x
-        case x +: xs =>
-          val targets = xs mkString ", "
-          throw new IllegalArgumentException(s"multiple $property found: $targets")
-        case Seq() =>
-          throw new IllegalArgumentException(s"$property not found: $file")
-      }
-    }
+abstract class LinedProperty[A: LineLoadable](
+  parser: String => Parser[String],
+  property: String) {
 
-    def loadMultiple(property: String): Seq[String] = {
-      val pattern = toPattern(property)
-      IO.readLines(file) collect {
-        case pattern(line) => line
-      }
-    }
-
-    private def toPattern(property: String): String ==> String = Extractor {
-      val parser = Space ~> property ~> Space ~> target
-      line => parse(line, parser).right.toOption
-    }
-
+  def via(file: File): A = {
+    convertFrom(PropertyFile(file))
   }
 
+  def fromResource(resourcePath: String): A = {
+    convertFrom(PropertyResource(resourcePath))
+  }
+
+  private def convertFrom(source: PropertySource) = {
+    val load = implicitly[LineLoadable[A]]
+    load by new LineLoader(source, property, parser(property))
+  }
 }

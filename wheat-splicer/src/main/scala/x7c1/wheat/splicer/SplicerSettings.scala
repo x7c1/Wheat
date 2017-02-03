@@ -23,7 +23,6 @@ object SplicerSettings {
 
   private lazy val splicers = Def setting {
     val factory = new CacheSplicers.Factory(
-      cacheDirectory = splicerSdk.value.extras / "android/m2repository",
       unmanagedDirectory = (unmanagedBase in splicerExpand).value,
       sdk = splicerSdk.value
     )

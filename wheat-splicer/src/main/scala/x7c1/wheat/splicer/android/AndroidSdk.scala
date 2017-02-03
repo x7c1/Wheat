@@ -11,6 +11,8 @@ trait AndroidSdk {
   def platforms: File
 
   def extras: File
+
+  def `android-m2repository`: File
 }
 
 object AndroidSdk {
@@ -20,11 +22,12 @@ object AndroidSdk {
     buildToolsVersion: String,
     compileSdkVersion: Int): AndroidSdk = {
 
+    val root = validate(sdkRoot).getCanonicalFile
     AndroidSdkImpl(
-      root = validate(sdkRoot),
-      buildTools = validate(sdkRoot / "build-tools" / buildToolsVersion),
-      platforms = validate(sdkRoot / "platforms" / s"android-$compileSdkVersion"),
-      extras = validate(sdkRoot / "extras")
+      root = root,
+      buildTools = validate(root / "build-tools" / buildToolsVersion),
+      platforms = validate(root / "platforms" / s"android-$compileSdkVersion"),
+      extras = validate(root / "extras")
     )
   }
 
@@ -40,6 +43,11 @@ object AndroidSdk {
     root: File,
     buildTools: File,
     platforms: File,
-    extras: File) extends AndroidSdk
+    extras: File) extends AndroidSdk {
+
+    override val `android-m2repository`: File = {
+      validate(extras / "android" / "m2repository")
+    }
+  }
 
 }

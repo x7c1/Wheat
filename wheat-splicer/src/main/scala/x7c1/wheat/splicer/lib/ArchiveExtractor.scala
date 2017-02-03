@@ -1,17 +1,20 @@
 package x7c1.wheat.splicer.lib
 
-import sbt.Process.stringToProcess
-import sbt.{File, Logger}
+import sbt.{File, Process, ProcessBuilder}
 
 object ArchiveExtractor {
-  def apply(logger: Logger, destination: File): ArchiveExtractor = {
-    new ArchiveExtractor(logger, destination)
+  def apply(destination: File): ArchiveExtractor = {
+    new ArchiveExtractor(destination)
   }
 }
 
-class ArchiveExtractor private(logger: Logger, destination: File) {
+class ArchiveExtractor private(destination: File) {
 
-  def unzip(archive: File): Int = {
-    s"unzip -o -d ${destination.getAbsolutePath} ${archive.getAbsolutePath}" !< logger
+  def unzip(archive: File): ProcessBuilder = {
+    Process apply Seq(
+      "unzip", "-o", "-d",
+      destination.getAbsolutePath,
+      archive.getAbsolutePath
+    )
   }
 }

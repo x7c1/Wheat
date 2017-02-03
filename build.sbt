@@ -1,5 +1,5 @@
 import sbt.Keys.libraryDependencies
-import WheatDependencies.{`sbt-assembly`, forTests}
+import WheatDependencies.{`sbt-assembly`, forTests, logback}
 import WheatSettings.forPlugin
 
 
@@ -22,13 +22,16 @@ lazy val `wheat-parser` = project.
 lazy val `wheat-splicer` = project.
   settings(forPlugin).
   settings(
-    version := "0.1.0"
+    libraryDependencies ++= forTests ++ Seq(
+      logback % Test
+    ),
+    version := "0.1.1"
   )
 
 lazy val `wheat-splicer-assembly` = project.
   settings(forPlugin).
   settings(addSbtPlugin(`sbt-assembly`)).
   settings(
-    version := "0.1.0"
+    version := "0.1.1"
   ).
   dependsOn(`wheat-splicer`)
