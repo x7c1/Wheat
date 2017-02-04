@@ -58,13 +58,13 @@ class CacheSplicersTest extends FlatSpecLike
 }
 
 trait SplicerSettings {
-  val project = file("./sample-splicer-client")
+  val project = file("./sample-project")
   val sdk = AndroidSdk(
     sdkRoot = sdkRoot via (project / "local.properties"),
     buildToolsVersion = buildToolsVersion fromResource "/build.gradle",
     compileSdkVersion = compileSdkVersion fromResource "/build.gradle"
   )
-  val unmanaged = (project / "libs-expanded").getCanonicalFile
+  val unmanaged = (project / "sample-android-jars" / "libs-expanded").getCanonicalFile
   val splicers = {
     val factory = new CacheSplicers.Factory(unmanaged, sdk)
     factory create (dependencies fromResource "/target.gradle")

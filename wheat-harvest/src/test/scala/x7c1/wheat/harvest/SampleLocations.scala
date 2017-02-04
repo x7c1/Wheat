@@ -1,7 +1,6 @@
 package x7c1.wheat.harvest
 
-import java.io.File
-
+import sbt.{file, richFile}
 import x7c1.wheat.harvest.layout.LayoutLocations
 import x7c1.wheat.harvest.values.ValuesLocations
 
@@ -16,8 +15,8 @@ object SampleLocations {
   )
 
   def directories = WheatDirectories(
-    starter = new File("sample-starter"),
-    glue = new File("sample-glue")
+    starter = file("sample-project") / "sample-starter",
+    glue = file("sample-project") / "sample-glue"
   )
 
   def layout = LayoutLocations(
