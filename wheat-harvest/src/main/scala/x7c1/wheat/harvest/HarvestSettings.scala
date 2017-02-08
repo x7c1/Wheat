@@ -5,7 +5,7 @@ import sbt.{Def, File}
 import x7c1.wheat.harvest.layout.{ViewHolderGenerator, LayoutLocations, LayoutGenerator}
 import x7c1.wheat.harvest.values.{ValuesLocations, ValuesGenerator}
 
-object WheatSettings {
+object HarvestSettings {
 
   lazy val packages = Def.settingKey[WheatPackages]("project packages")
   lazy val directories = Def.settingKey[WheatDirectories]("project directories")

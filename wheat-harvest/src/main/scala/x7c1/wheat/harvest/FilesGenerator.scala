@@ -4,7 +4,6 @@ import sbt.Def.inputTask
 import sbt.Keys.streams
 import sbt.PathFinder
 import x7c1.wheat.harvest.WheatParser.selectFrom
-import x7c1.wheat.harvest.WheatSettings.wheat
 
 class FilesGenerator (
   finder: PathFinder,

@@ -1,7 +1,7 @@
 package x7c1.wheat.harvest.layout
 
 import sbt._
-import x7c1.wheat.harvest.WheatSettings.{directories, packages, wheat}
+import x7c1.wheat.harvest.HarvestSettings.{directories, packages}
 import x7c1.wheat.harvest.{FilesGenerator, WheatDirectories, WheatPackages}
 
 object LayoutGenerator {
