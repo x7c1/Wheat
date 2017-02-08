@@ -28,16 +28,3 @@ object HarvestSettings {
     layoutLocations in wheat := LayoutGenerator.locations.value
   )
 }
-
-case class WheatDirectories(
-  starter: File,
-  glue: File
-)
-
-case class WheatPackages(
-  starter :String,
-  starterLayout: String,
-  starterValues: String,
-  glueLayout: String,
-  glueValues: String
-)
