@@ -6,7 +6,7 @@ import x7c1.wheat.harvest.values.ValuesLocations
 
 object SampleLocations {
 
-  def packages = WheatPackages(
+  def packages = Packages(
     starter = "x7c1.wheat.sample",
     starterLayout = "x7c1.wheat.sample.res.layout",
     starterValues = "x7c1.wheat.sample.res.values",
@@ -14,7 +14,7 @@ object SampleLocations {
     glueValues = "x7c1.wheat.sample.glue.res.values"
   )
 
-  def directories = WheatDirectories(
+  def directories = Directories(
     starter = file("sample-project") / "sample-starter",
     glue = file("sample-project") / "sample-glue"
   )

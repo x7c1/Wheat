@@ -3,7 +3,7 @@ package x7c1.wheat.harvest.layout
 import sbt.Def.Initialize
 import sbt.{Def, File, InputTask, globFilter, richFile, singleFileFinder}
 import x7c1.wheat.harvest.HarvestSettings.harvestLocations
-import x7c1.wheat.harvest.{FilesGenerator, HarvestLocations, WheatPackages}
+import x7c1.wheat.harvest.{FilesGenerator, HarvestLocations, Packages}
 
 object LayoutGenerator {
 
@@ -27,7 +27,7 @@ case class LayoutLocations(
 
   private val directories = locations.directories
 
-  val packages: WheatPackages = locations.packages
+  val packages: Packages = locations.packages
 
   val layoutSrc: File = directories.starter / "src/main/res/layout"
 

@@ -3,7 +3,7 @@ package x7c1.wheat.harvest.values
 import sbt.Def.Initialize
 import sbt.{Def, File, InputTask, globFilter, richFile, singleFileFinder}
 import x7c1.wheat.harvest.HarvestSettings.harvestLocations
-import x7c1.wheat.harvest.{FilesGenerator, HarvestLocations, WheatDirectories, WheatPackages}
+import x7c1.wheat.harvest.{FilesGenerator, HarvestLocations, Directories, Packages}
 
 object ValuesGenerator {
 
@@ -27,7 +27,7 @@ case class ValuesLocations(
 
   private val directories = locations.directories
 
-  val packages: WheatPackages = locations.packages
+  val packages: Packages = locations.packages
 
   val valuesSrc: File = directories.starter / "src/main/res/values"
 

@@ -4,32 +4,32 @@ import sbt.File
 
 trait HarvestLocations {
 
-  def directories: WheatDirectories
+  def directories: Directories
 
-  def packages: WheatPackages
+  def packages: Packages
 }
 
 object HarvestLocations {
 
   def apply(
-    directories: WheatDirectories,
-    packages: WheatPackages): HarvestLocations = {
+    directories: Directories,
+    packages: Packages): HarvestLocations = {
 
     HarvestLocationsImpl(directories, packages)
   }
 
   private case class HarvestLocationsImpl(
-    directories: WheatDirectories,
-    packages: WheatPackages) extends HarvestLocations
+    directories: Directories,
+    packages: Packages) extends HarvestLocations
 
 }
 
-case class WheatDirectories(
+case class Directories(
   starter: File,
   glue: File
 )
 
-case class WheatPackages(
+case class Packages(
   starter: String,
   starterLayout: String,
   starterValues: String,
