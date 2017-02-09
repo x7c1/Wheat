@@ -1,27 +1,33 @@
 package x7c1.wheat.harvest.values
 
-import sbt._
-import x7c1.wheat.harvest.HarvestSettings.{directories, packages}
-import x7c1.wheat.harvest.{FilesGenerator, WheatDirectories, WheatPackages}
+import sbt.Def.Initialize
+import sbt.{Def, File, InputTask, globFilter, richFile, singleFileFinder}
+import x7c1.wheat.harvest.HarvestSettings.harvestLocations
+import x7c1.wheat.harvest.{FilesGenerator, HarvestLocations, WheatDirectories, WheatPackages}
 
 object ValuesGenerator {
 
-  def task: Def.Initialize[InputTask[Unit]] = Def settingDyn generator.value.task
+  def task: Initialize[InputTask[Unit]] = {
+    Def settingDyn generator.value.task
+  }
 
   def generator = Def setting new FilesGenerator(
     finder = locations.value.valuesSrc * "*.xml",
     loader = new ValuesResourceLoader(locations.value.valuesSrc),
     generator = new ValuesSourcesFactory(locations.value)
   )
-  def locations = Def setting ValuesLocations(
-    packages = (packages in wheat).value,
-    directories = (directories in wheat).value
-  )
+
+  def locations: Initialize[ValuesLocations] = {
+    Def setting ValuesLocations(harvestLocations.value)
+  }
 }
 
 case class ValuesLocations(
-  packages: WheatPackages,
-  directories: WheatDirectories){
+  locations: HarvestLocations) {
+
+  private val directories = locations.directories
+
+  val packages: WheatPackages = locations.packages
 
   val valuesSrc: File = directories.starter / "src/main/res/values"
 

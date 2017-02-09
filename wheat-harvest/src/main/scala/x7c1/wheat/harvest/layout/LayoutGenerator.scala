@@ -1,27 +1,33 @@
 package x7c1.wheat.harvest.layout
 
-import sbt._
-import x7c1.wheat.harvest.HarvestSettings.{directories, packages}
-import x7c1.wheat.harvest.{FilesGenerator, WheatDirectories, WheatPackages}
+import sbt.Def.Initialize
+import sbt.{Def, File, InputTask, globFilter, richFile, singleFileFinder}
+import x7c1.wheat.harvest.HarvestSettings.harvestLocations
+import x7c1.wheat.harvest.{FilesGenerator, HarvestLocations, WheatPackages}
 
 object LayoutGenerator {
 
-  def task: Def.Initialize[InputTask[Unit]] = Def settingDyn generator.value.task
+  def task: Initialize[InputTask[Unit]] = {
+    Def settingDyn generator.value.task
+  }
 
   def generator = Def setting new FilesGenerator(
     finder = locations.value.layoutSrc * "*.xml",
     loader = new LayoutResourceLoader(locations.value.layoutSrc),
     generator = new LayoutSourcesFactory(locations.value)
   )
-  def locations = Def setting LayoutLocations(
-    packages = (packages in wheat).value,
-    directories = (directories in wheat).value
-  )
+
+  def locations: Initialize[LayoutLocations] = {
+    Def setting LayoutLocations(harvestLocations.value)
+  }
 }
 
 case class LayoutLocations(
-  packages: WheatPackages,
-  directories: WheatDirectories){
+  locations: HarvestLocations) {
+
+  private val directories = locations.directories
+
+  val packages: WheatPackages = locations.packages
 
   val layoutSrc: File = directories.starter / "src/main/res/layout"
 

@@ -19,13 +19,13 @@ object SampleLocations {
     glue = file("sample-project") / "sample-glue"
   )
 
-  def layout = LayoutLocations(
+  def layout = LayoutLocations(HarvestLocations(
     packages = packages,
     directories = directories
-  )
+  ))
 
-  def values = ValuesLocations(
+  def values = ValuesLocations(HarvestLocations(
     packages = packages,
     directories = directories
-  )
+  ))
 }
