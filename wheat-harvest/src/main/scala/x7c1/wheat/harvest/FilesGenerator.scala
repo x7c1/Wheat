@@ -11,7 +11,7 @@ class FilesGenerator (
   generator: JavaSourcesFactory ){
 
   def task = inputTask {
-    val logger = WheatLogger((streams in wheat).value.log)
+    val logger = WheatLogger(streams.value.log)
     val names = selectFrom(finder).parsed
 
     logger info "selected files"

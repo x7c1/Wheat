@@ -31,8 +31,6 @@ object HarvestSettings {
     settingKey("res/layout locations")
   }
 
-  //  lazy val wheat = config("wheat")
-
   def all = Seq(
     harvestLayout := LayoutGenerator.task.evaluated,
     harvestValues := ValuesGenerator.task.evaluated,
