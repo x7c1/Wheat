@@ -1,7 +1,7 @@
 package x7c1.wheat.harvest
 
-import sbt.Def.settingKey
-import sbt.{Def, SettingKey}
+import sbt.Def.{inputKey, settingKey}
+import sbt.{InputKey, SettingKey}
 import x7c1.wheat.harvest.layout.{LayoutGenerator, LayoutLocations, ViewHolderGenerator}
 import x7c1.wheat.harvest.values.{ValuesGenerator, ValuesLocations}
 
@@ -11,24 +11,34 @@ object HarvestSettings {
     settingKey("Location settings for wheat-harvest plugin")
   }
 
-  lazy val generateLayout = Def.inputKey[Unit]("Generates res/layout files")
+  lazy val harvestLayout: InputKey[Unit] = {
+    inputKey("Generates from res/layout files")
+  }
 
-  lazy val generateValues = Def.inputKey[Unit]("Generates res/values files")
+  lazy val harvestValues: InputKey[Unit] = {
+    inputKey("Generates from res/values files")
+  }
 
-  lazy val generateViewHolder = Def.inputKey[Unit]("Generates ViewHolder files")
+  lazy val harvestViewHolder: InputKey[Unit] = {
+    inputKey("Generates ViewHolder files")
+  }
 
-  lazy val valuesLocations = Def.settingKey[ValuesLocations]("res/values locations")
+  lazy val harvestValuesLocations: SettingKey[ValuesLocations] = {
+    settingKey("res/values locations")
+  }
 
-  lazy val layoutLocations = Def.settingKey[LayoutLocations]("res/layout locations")
+  lazy val harvestLayoutLocations: SettingKey[LayoutLocations] = {
+    settingKey("res/layout locations")
+  }
 
-  lazy val wheat = config("wheat")
+  //  lazy val wheat = config("wheat")
 
   def all = Seq(
-    generateLayout in wheat := LayoutGenerator.task.evaluated,
-    generateValues in wheat := ValuesGenerator.task.evaluated,
-    generateViewHolder in wheat := ViewHolderGenerator.task.evaluated,
+    harvestLayout := LayoutGenerator.task.evaluated,
+    harvestValues := ValuesGenerator.task.evaluated,
+    harvestViewHolder := ViewHolderGenerator.task.evaluated,
 
-    valuesLocations := ValuesGenerator.locations.value,
-    layoutLocations := LayoutGenerator.locations.value
+    harvestValuesLocations := ValuesGenerator.locations.value,
+    harvestLayoutLocations := LayoutGenerator.locations.value
   )
 }
