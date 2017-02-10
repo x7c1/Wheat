@@ -11,7 +11,10 @@ class FilesGenerator(
 
   def task: Initialize[InputTask[Unit]] =
     Def inputTask run(
-      logger = Keys.streams.value.log,
+      logger = LabeledLogger(
+        label = "harvest",
+        delegateTo = Keys.streams.value.log
+      ),
       loadFileNames = () => selectFrom(finder).parsed
     )
 
