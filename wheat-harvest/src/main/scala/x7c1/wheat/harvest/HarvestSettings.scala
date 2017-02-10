@@ -33,11 +33,15 @@ object HarvestSettings {
 
   def all = Seq(
     harvestLayout := LayoutGenerator.task.evaluated,
-    harvestValues := ValuesGenerator.task.evaluated,
+    harvestValues := {
+      ValuesGenerator.task.evaluated
+    },
     harvestViewHolder := {
       ViewHolderGenerator.task.evaluated
     },
-    harvestValuesLocations := ValuesGenerator.locations.value,
+    harvestValuesLocations := {
+      ValuesGenerator.locations.value
+    },
     harvestLayoutLocations := LayoutGenerator.locations.value
   )
 }

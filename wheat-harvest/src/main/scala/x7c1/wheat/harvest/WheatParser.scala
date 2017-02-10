@@ -1,8 +1,7 @@
 package x7c1.wheat.harvest
 
-import sbt.Def.inputTask
+import sbt.PathFinder
 import sbt.complete.Parser
-import sbt.{Def, InputTask, PathFinder, State}
 import x7c1.wheat.parser.reductive.ReductiveParser
 
 object WheatParser {
