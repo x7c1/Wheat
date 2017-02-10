@@ -7,13 +7,13 @@ object ResourceLoader {
  }
 
 trait ResourceLoader {
-  def load(fileName: String): Either[Seq[WheatParserError], ParsedResource]
+  def load(fileName: String): Either[Seq[HarvestParserError], ParsedResource]
 }
 
 private class ResourceLoaderImpl(elementsLoader: ResourceElementsLoader)
   extends ResourceLoader {
 
-  override def load(fileName: String): Either[Seq[WheatParserError], ParsedResource] = {
+  override def load(fileName: String): Either[Seq[HarvestParserError], ParsedResource] = {
     ResourceNameParser.readPrefix(fileName) match {
       case Right(prefix) =>
         val (l, r) = elementsLoader.create(prefix.ofKey).partition(_.isLeft)
@@ -30,5 +30,5 @@ private class ResourceLoaderImpl(elementsLoader: ResourceElementsLoader)
 
 trait ResourceElementsLoader {
   def create(prefix: String):
-    List[Either[WheatParserError, ParsedResourceElement]]
+    List[Either[HarvestParserError, ParsedResourceElement]]
 }

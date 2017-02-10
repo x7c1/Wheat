@@ -16,11 +16,11 @@ object HarvestParser {
     }
   }
 
-  def camelizeTail(string: String): Either[WheatParserError, String] = {
+  def camelizeTail(string: String): Either[HarvestParserError, String] = {
     val parser = (identifier ~ (token('_') ~> identifier).*) map {
       case (head, tail) => head + tail.map(_.capitalize).mkString
     }
-    parse(string, parser).left.map(WheatParserError)
+    parse(string, parser).left.map(HarvestParserError)
   }
 
 
@@ -31,4 +31,4 @@ object HarvestParser {
 
 }
 
-case class WheatParserError(message: String)
+case class HarvestParserError(message: String)
