@@ -1,7 +1,7 @@
 package x7c1.wheat.harvest
 
 import sbt.Def.{inputKey, settingKey}
-import sbt.{InputKey, SettingKey}
+import sbt.{Def, InputKey, SettingKey}
 import x7c1.wheat.harvest.layout.{LayoutGenerator, LayoutLocations, ViewHolderGenerator}
 import x7c1.wheat.harvest.values.{ValuesGenerator, ValuesLocations}
 
@@ -34,8 +34,9 @@ object HarvestSettings {
   def all = Seq(
     harvestLayout := LayoutGenerator.task.evaluated,
     harvestValues := ValuesGenerator.task.evaluated,
-    harvestViewHolder := ViewHolderGenerator.task.evaluated,
-
+    harvestViewHolder := {
+      ViewHolderGenerator.task.evaluated
+    },
     harvestValuesLocations := ValuesGenerator.locations.value,
     harvestLayoutLocations := LayoutGenerator.locations.value
   )

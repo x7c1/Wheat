@@ -1,21 +1,25 @@
 package x7c1.wheat.harvest
 
-import sbt.Def.inputTask
-import sbt.Keys.streams
-import sbt.PathFinder
+import sbt.Def.Initialize
+import sbt.{Def, InputTask, Keys, PathFinder, ProcessLogger}
 import x7c1.wheat.harvest.WheatParser.selectFrom
 
-class FilesGenerator (
+class FilesGenerator(
   finder: PathFinder,
   loader: ResourceLoader,
-  generator: JavaSourcesFactory ){
+  generator: JavaSourcesFactory) {
 
-  def task = inputTask {
-    val logger = WheatLogger(streams.value.log)
-    val names = selectFrom(finder).parsed
+  def task: Initialize[InputTask[Unit]] =
+    Def inputTask run(
+      logger = Keys.streams.value.log,
+      loadFileNames = () => selectFrom(finder).parsed
+    )
+
+  def run(logger: ProcessLogger, loadFileNames: () => Seq[String]): Unit = {
+    val names = loadFileNames()
 
     logger info "selected files"
-    names.map(" * " + _).foreach(logger.info)
+    names.map(" * " + _) foreach (logger info _)
 
     val list = names map loader.load map (_.right map generator.createFrom)
     logger info "generated files"
@@ -26,7 +30,7 @@ class FilesGenerator (
           JavaSourceWriter write source
           logger info " * " + source.file.getPath
         }
-      case Left(errors) => errors.foreach(println)
+      case Left(errors) => errors foreach (logger error _.message)
     }
   }
 }

@@ -3,7 +3,7 @@ package x7c1.wheat.harvest.values
 import sbt.Def.Initialize
 import sbt.{Def, File, InputTask, globFilter, richFile, singleFileFinder}
 import x7c1.wheat.harvest.HarvestSettings.harvestLocations
-import x7c1.wheat.harvest.{FilesGenerator, HarvestLocations, Directories, Packages}
+import x7c1.wheat.harvest.{FilesGenerator, HarvestLocations, Packages}
 
 object ValuesGenerator {
 

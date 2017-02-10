@@ -1,7 +1,8 @@
 package x7c1.wheat.harvest
 
+import sbt.Def.inputTask
 import sbt.complete.Parser
-import sbt.{Def, PathFinder, State}
+import sbt.{Def, InputTask, PathFinder, State}
 import x7c1.wheat.parser.reductive.ReductiveParser
 
 object WheatParser {
@@ -23,11 +24,11 @@ object WheatParser {
     parse(string, parser).left.map(WheatParserError)
   }
 
-  def selectFrom(finder: PathFinder): Def.Initialize[State => Parser[Seq[String]]] =
-    Def.setting { state =>
-      val names = finder.get.map(_.getName) filterNot (_ startsWith "_")
-      ReductiveParser from names
-    }
+
+  def selectFrom(finder: PathFinder): Parser[Seq[String]] = {
+    val names = finder.get.map(_.getName) filterNot (_ startsWith "_")
+    ReductiveParser from names
+  }
 
 }
 
