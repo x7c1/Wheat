@@ -2,7 +2,7 @@ package x7c1.wheat.harvest
 
 import sbt.Def.Initialize
 import sbt.{Def, InputTask, Keys, PathFinder, ProcessLogger}
-import x7c1.wheat.harvest.WheatParser.selectFrom
+import x7c1.wheat.harvest.HarvestParser.selectFrom
 
 class FilesGenerator(
   finder: PathFinder,

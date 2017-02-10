@@ -1,7 +1,7 @@
 package x7c1.wheat.harvest.layout
 
 import sbt._
-import x7c1.wheat.harvest.WheatParser.camelizeTail
+import x7c1.wheat.harvest.HarvestParser.camelizeTail
 import x7c1.wheat.harvest.{WheatParserError, ParsedResourceElement, ResourceElementsLoader, ResourceLoader}
 
 import scala.xml.{Elem, XML}

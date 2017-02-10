@@ -4,7 +4,7 @@ import sbt.PathFinder
 import sbt.complete.Parser
 import x7c1.wheat.parser.reductive.ReductiveParser
 
-object WheatParser {
+object HarvestParser {
 
   import sbt.complete.DefaultParsers._
 

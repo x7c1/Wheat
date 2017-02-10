@@ -11,7 +11,7 @@ object ResourceNameParser {
     parse(name, parserToPrefix).left.map(WheatParserError).joinRight
   }
 
-  def identifier = WheatParser.identifier
+  def identifier = HarvestParser.identifier
 
   def parserToPrefix: Parser[Either[WheatParserError, ResourcePrefix]] = {
     val wordsParser = identifier ~ (token('_') ~> identifier).* map {
