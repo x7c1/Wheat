@@ -23,7 +23,6 @@ object HarvestParser {
     parse(string, parser).left.map(HarvestParserError)
   }
 
-
   def selectFrom(finder: PathFinder): Parser[Seq[String]] = {
     val names = finder.get.map(_.getName) filterNot (_ startsWith "_")
     ReductiveParser from names

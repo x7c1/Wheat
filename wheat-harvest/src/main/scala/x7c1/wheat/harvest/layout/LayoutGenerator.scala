@@ -3,19 +3,24 @@ package x7c1.wheat.harvest.layout
 import sbt.Def.Initialize
 import sbt.{Def, File, InputTask, globFilter, richFile, singleFileFinder}
 import x7c1.wheat.harvest.HarvestSettings.harvestLocations
-import x7c1.wheat.harvest.{FilesGenerator, HarvestLocations, Packages}
+import x7c1.wheat.harvest.{FilesGenerator, HarvestLocations, JavaSourcesFactory, Packages}
 
 object LayoutGenerator {
 
   def task: Initialize[InputTask[Unit]] = Def settingDyn {
-    from(locations.value).task
+    val generator = from(
+      locations = locations.value,
+      factory = new LayoutSourcesFactory(locations.value)
+    )
+    generator.task
   }
 
-  def from(locations: LayoutLocations) = new FilesGenerator(
-    finder = locations.layoutSrc * "*.xml",
-    loader = new LayoutResourceLoader(locations.layoutSrc),
-    generator = new LayoutSourcesFactory(locations)
-  )
+  def from(locations: LayoutLocations, factory: JavaSourcesFactory) =
+    new FilesGenerator(
+      finder = locations.layoutSrc * "*.xml",
+      loader = new LayoutResourceLoader(locations.layoutSrc),
+      generator = factory
+    )
 
   def locations: Initialize[LayoutLocations] = {
     Def setting LayoutLocations(harvestLocations.value)
