@@ -7,14 +7,14 @@ import x7c1.wheat.harvest.{FilesGenerator, HarvestLocations, Packages}
 
 object LayoutGenerator {
 
-  def task: Initialize[InputTask[Unit]] = {
-    Def settingDyn generator.value.task
+  def task: Initialize[InputTask[Unit]] = Def settingDyn {
+    from(locations.value).task
   }
 
-  def generator = Def setting new FilesGenerator(
-    finder = locations.value.layoutSrc * "*.xml",
-    loader = new LayoutResourceLoader(locations.value.layoutSrc),
-    generator = new LayoutSourcesFactory(locations.value)
+  def from(locations: LayoutLocations) = new FilesGenerator(
+    finder = locations.layoutSrc * "*.xml",
+    loader = new LayoutResourceLoader(locations.layoutSrc),
+    generator = new LayoutSourcesFactory(locations)
   )
 
   def locations: Initialize[LayoutLocations] = {
