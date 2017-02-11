@@ -12,6 +12,26 @@ trait HarvestLocations {
 object HarvestLocations {
 
   def apply(
+    starterPackage: String,
+    starterDirectory: File,
+    gluePackage: String,
+    glueDirectory: File): HarvestLocations = new HarvestLocations {
+
+    override def directories = Directories(
+      starter = starterDirectory,
+      glue = glueDirectory
+    )
+
+    override def packages = Packages(
+      starter = starterPackage,
+      starterLayout = s"$starterPackage.res.layout",
+      starterValues = s"$starterPackage.res.values",
+      glueLayout = s"$gluePackage.res.layout",
+      glueValues = s"$gluePackage.res.values"
+    )
+  }
+
+  def apply(
     directories: Directories,
     packages: Packages): HarvestLocations = {
 
