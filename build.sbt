@@ -1,13 +1,12 @@
-import sbt.Keys.libraryDependencies
 import WheatDependencies.{`sbt-assembly`, forTests, logback}
 import WheatSettings.forPlugin
+import sbt.Keys.libraryDependencies
 
 
 lazy val `wheat-harvest` = project.
   settings(forPlugin).
   settings(
-    name := "wheat-harvest",
-    version := "0.1.0",
+    version := "0.2.0",
     libraryDependencies ++= forTests
   ).
   dependsOn(`wheat-parser`).
