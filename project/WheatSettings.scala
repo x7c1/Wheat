@@ -4,8 +4,6 @@ import sbt.Keys._
 
 object WheatSettings {
 
-  lazy val latestVersion = "2.11.7"
-
   lazy val common = new SettingList(Seq(
     organization := "x7c1",
     scalacOptions ++= Seq(
