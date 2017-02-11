@@ -3,20 +3,20 @@ import WheatSettings.forPlugin
 import sbt.Keys.libraryDependencies
 
 
+lazy val `chaff-parser` = project.
+  settings(forPlugin).
+  settings(
+    version := "0.1.0"
+  )
+
 lazy val `wheat-harvest` = project.
   settings(forPlugin).
   settings(
     version := "0.2.0",
     libraryDependencies ++= forTests
   ).
-  dependsOn(`wheat-parser`).
+  dependsOn(`chaff-parser`).
   enablePlugins(SbtTwirl)
-
-lazy val `wheat-parser` = project.
-  settings(forPlugin).
-  settings(
-    version := "0.1.0"
-  )
 
 lazy val `wheat-splicer` = project.
   settings(forPlugin).

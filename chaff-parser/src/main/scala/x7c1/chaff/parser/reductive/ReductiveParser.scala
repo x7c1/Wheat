@@ -1,4 +1,4 @@
-package x7c1.wheat.parser.reductive
+package x7c1.chaff.parser.reductive
 
 import sbt.complete.DefaultParsers.{NotSpace, Space, failure, token}
 import sbt.complete.Parser
