@@ -1,7 +1,7 @@
 package x7c1.wheat.splicer.core
 
 import sbt.Def.Classpath
-import sbt.{Attributed, File, ModuleID, ProcessLogger, globFilter, singleFileFinder}
+import sbt.{Attributed, File, ModuleID, globFilter, singleFileFinder}
 import x7c1.wheat.splicer.android.AndroidSdk
 import x7c1.wheat.splicer.lib.{HasProcessLogger, ModuleIdFactory, Reader}
 import x7c1.wheat.splicer.maven.{ArchiveCache, ArchiveCacheFinder, ArchiveCacheTraverser}

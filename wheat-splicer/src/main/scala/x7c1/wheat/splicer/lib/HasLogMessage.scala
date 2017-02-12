@@ -1,5 +1,6 @@
 package x7c1.wheat.splicer.lib
 
+
 trait HasLogMessage[A] {
   def messageOf(x: A): LogMessage
 }

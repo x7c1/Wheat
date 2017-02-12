@@ -18,4 +18,20 @@ object HasProcessLogger {
     new HasProcessLogger {
       override def logger = x
     }
+
+  implicit class RichEitherReader[A <: HasProcessLogger, L: HasLogMessage, R: HasLogMessage](
+    reader: Reader[A, Either[L, R]]) {
+
+    def asLoggerApplied: Reader[A, Unit] = {
+      reader map {
+        case Right(right) => implicitly[HasLogMessage[R]] messageOf right
+        case Left(left) => implicitly[HasLogMessage[L]] messageOf left
+      } flatMap (_.toReader)
+    }
+  }
+
+  def LogReader[A](f: ProcessLogger => A): Reader[HasProcessLogger, A] =
+    Reader { context =>
+      f(context.logger)
+    }
 }

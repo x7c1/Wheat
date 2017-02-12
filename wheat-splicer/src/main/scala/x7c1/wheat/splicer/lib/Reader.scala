@@ -1,7 +1,5 @@
 package x7c1.wheat.splicer.lib
 
-import sbt.ProcessLogger
-
 case class Reader[X, A](run: X => A) {
   def map[B](f: A => B): Reader[X, B] = {
     new Reader[X, B](x => f(run(x)))
@@ -26,21 +24,4 @@ object Reader {
       readers.foldLeft(nop)(_ append _)
     }
   }
-
-  implicit class RichEitherReader[L: HasLogMessage, R: HasLogMessage](
-    reader: Reader[HasProcessLogger, Either[L, R]]) {
-
-    def asLoggerApplied: Reader[HasProcessLogger, Unit] = {
-      reader map {
-        case Right(right) => implicitly[HasLogMessage[R]] messageOf right
-        case Left(left) => implicitly[HasLogMessage[L]] messageOf left
-      } flatMap (_.toReader)
-    }
-  }
-
-  def LogReader[A](f: ProcessLogger => A): Reader[HasProcessLogger, A] =
-    Reader { context =>
-      f(context.logger)
-    }
-
 }

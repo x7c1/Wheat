@@ -6,8 +6,8 @@ import sbt.{File, PathFinder, globFilter, singleFileFinder}
 import x7c1.wheat.splicer.android.{AndroidSdk, RGenerator}
 import x7c1.wheat.splicer.core.CacheSplicerError.{NotFound, Propagated}
 import x7c1.wheat.splicer.lib.Extractor.==>
+import x7c1.wheat.splicer.lib.HasProcessLogger.LogReader
 import x7c1.wheat.splicer.lib.LogMessage.{Error, Info}
-import x7c1.wheat.splicer.lib.Reader.LogReader
 import x7c1.wheat.splicer.lib.{ArchiveExtractor, Extractor, FileCleaner, HasLogMessage, HasProcessLogger, Reader}
 import x7c1.wheat.splicer.maven.{AarCache, ArchiveCache, ArchiveCacheTraverser, JarCache}
 
