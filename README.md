@@ -1,7 +1,7 @@
 
 # Wheat Project
 
-Libraries to develop Android apps with Scala.
+Libraries to develop Android apps on Scala.
 
 ## wheat-harvest
 
@@ -27,7 +27,7 @@ dependencies {
 }
 ```
 
-Running task `splicerExpand`:
+By running task `splicerExpand`:
 
 ```
 > your-project/splicerExpand
