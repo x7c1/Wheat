@@ -19,11 +19,12 @@ object LogMessage {
   }
 
   implicit class ReaderLike(message: LogMessage) {
-    def toReader: Reader[ProcessLogger, Unit] = Reader { logger =>
+    def toReader: Reader[HasProcessLogger, Unit] = Reader { context =>
+      val logger = context.logger
       message match {
         case _: Error => message.messages foreach (logger.error(_))
         case _: Info => message.messages foreach (logger.info(_))
-        case Multiple(raw) => (raw map (_.toReader)).uniteAll run logger
+        case Multiple(raw) => (raw map (_.toReader)).uniteAll run context
       }
     }
   }

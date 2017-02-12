@@ -1,6 +1,6 @@
 package x7c1.wheat.splicer.lib
 
-import sbt.{File, ProcessLogger}
+import sbt.File
 
 
 object FileCleaner {
@@ -13,10 +13,11 @@ object FileCleaner {
   }
 
   object withLogging {
-    def remove(file: File): Reader[ProcessLogger, Unit] = Reader { logger =>
-      FileCleaner remove file
-      logger info s"[done] removed: $file"
-    }
-  }
 
+    def remove(file: File): Reader[HasProcessLogger, Unit] =
+      Reader { context =>
+        FileCleaner remove file
+        context.logger info s"[done] removed: $file"
+      }
+  }
 }

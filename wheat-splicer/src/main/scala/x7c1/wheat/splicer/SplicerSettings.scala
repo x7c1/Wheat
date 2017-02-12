@@ -1,7 +1,7 @@
 package x7c1.wheat.splicer
 
 import sbt.Keys.{clean, streams, unmanagedBase, unmanagedJars, unmanagedSourceDirectories}
-import sbt.{Compile, Def, SettingKey, SettingsDefinition, TaskKey, richFile, settingKey, taskKey}
+import sbt.{Compile, Def, SettingKey, SettingsDefinition, TaskKey, settingKey, taskKey}
 import x7c1.wheat.splicer.SplicerKeys.{splicerClean, splicerDependencies, splicerExpand, splicerSdk}
 import x7c1.wheat.splicer.android.AndroidSdk
 import x7c1.wheat.splicer.core.CacheSplicers
