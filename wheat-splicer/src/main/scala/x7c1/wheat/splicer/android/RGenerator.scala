@@ -24,6 +24,7 @@ class RGenerator private (
 
     Process apply Seq(
       (sdk.buildTools / "aapt").getAbsolutePath, "package",
+      "--non-constant-id",
       "--auto-add-overlay",
       "-m", "-J", sourceDestination.getAbsolutePath,
       "-M", manifest.getAbsolutePath,
