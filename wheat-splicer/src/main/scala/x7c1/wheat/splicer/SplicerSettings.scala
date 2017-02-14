@@ -13,7 +13,7 @@ object SplicerKeys {
     settingKey("Dependencies for which splicerExpand runs")
   }
   val splicerSdk: SettingKey[AndroidSdk] = {
-    settingKey[AndroidSdk]("Android SDK files to run splicerExpand")
+    settingKey("Android SDK files to run splicerExpand")
   }
   val splicerExpand: TaskKey[Unit] = {
     taskKey("Expands archives targeted by splicerDependencies")
