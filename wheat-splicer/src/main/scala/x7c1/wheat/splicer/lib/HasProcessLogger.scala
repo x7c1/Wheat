@@ -2,22 +2,19 @@ package x7c1.wheat.splicer.lib
 
 import sbt.{Logger, ProcessLogger}
 
-import scala.language.implicitConversions
-
 trait HasProcessLogger {
   def logger: ProcessLogger
 }
 
 object HasProcessLogger {
-  implicit def fromLogger(x: Logger): HasProcessLogger =
-    new HasProcessLogger {
-      override def logger = Logger.log2PLog(x)
-    }
 
-  implicit def fromProcessLogger(x: ProcessLogger): HasProcessLogger =
-    new HasProcessLogger {
-      override def logger = x
-    }
+  implicit class fromLogger(x: Logger) extends HasProcessLogger {
+    override def logger: ProcessLogger = Logger.log2PLog(x)
+  }
+
+  implicit class fromProcessLogger(x: ProcessLogger) extends HasProcessLogger {
+    override def logger: ProcessLogger = x
+  }
 
   implicit class RichEitherReader[A <: HasProcessLogger, L: HasLogMessage, R: HasLogMessage](
     reader: Reader[A, Either[L, R]]) {
