@@ -39,15 +39,13 @@ case class ValuesLocations(
   }
 
   override def toString = {
-    val lines = Seq(
-      "(",
-      "  source",
-      "    values => " + valuesSrc,
-      "  destinations",
-      "    interface => " + valuesDst,
-      "    provider => " + providerDst,
-      ")"
-    )
-    lines mkString "\n"
+    s"""(
+       |  source:
+       |    values: $valuesSrc
+       |  destinations:
+       |    interface: $valuesDst
+       |    provider: $providerDst
+       |)
+     """.stripMargin
   }
 }

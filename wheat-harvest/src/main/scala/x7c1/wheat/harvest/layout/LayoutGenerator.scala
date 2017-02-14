@@ -44,16 +44,13 @@ case class LayoutLocations(
   }
 
   override def toString = {
-    val lines = Seq(
-      "(",
-      "  source",
-      "    layout => " + layoutSrc,
-      "  destinations",
-      "    holder => " + layoutDst,
-      "    provider => " + providerDst,
-      ")"
-    )
-    lines mkString "\n"
+    s"""(
+       |  source:
+       |    layout: $layoutSrc
+       |  destinations:
+       |    holder: $layoutDst
+       |    provider: $providerDst
+       |)
+     """.stripMargin
   }
-
 }

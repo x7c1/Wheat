@@ -7,6 +7,23 @@ trait HarvestLocations {
   def directories: Directories
 
   def packages: Packages
+
+  override def toString =
+    s"""(
+       |  starter:
+       |    directory:
+       |      ${directories.starter}
+       |    packages:
+       |      layout: ${packages.starterLayout}
+       |      values: ${packages.starterValues}
+       |  glue:
+       |    directory:
+       |      ${directories.glue}
+       |    packages:
+       |      layout: ${packages.glueLayout}
+       |      values: ${packages.glueValues}
+       |)
+     """.stripMargin
 }
 
 object HarvestLocations {
