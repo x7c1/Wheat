@@ -7,13 +7,13 @@ object ResourceNameParser {
 
   import sbt.complete.DefaultParsers._
 
-  def readPrefix(name: String): Either[WheatParserError, ResourcePrefix] = {
-    parse(name, parserToPrefix).left.map(WheatParserError).joinRight
+  def readPrefix(name: String): Either[HarvestParserError, ResourcePrefix] = {
+    parse(name, parserToPrefix).left.map(HarvestParserError).joinRight
   }
 
-  def identifier = WheatParser.identifier
+  def identifier = HarvestParser.identifier
 
-  def parserToPrefix: Parser[Either[WheatParserError, ResourcePrefix]] = {
+  def parserToPrefix: Parser[Either[HarvestParserError, ResourcePrefix]] = {
     val wordsParser = identifier ~ (token('_') ~> identifier).* map {
       case (x, xs) => Words(x +: xs)
     }
@@ -29,7 +29,7 @@ object ResourceNameParser {
             parentClassName = parentName map (privatePrefix + _)
           )
       }
-      parse(raw, p).left map WheatParserError
+      parse(raw, p).left map HarvestParserError
     }
   }
 

@@ -1,6 +1,7 @@
 package x7c1.wheat.splicer.android
 
-import sbt.{File, Process, ProcessBuilder, richFile}
+import sbt.{File, richFile}
+import x7c1.wheat.splicer.lib.ProcessRunner
 
 object RGenerator {
   def apply(
@@ -12,18 +13,19 @@ object RGenerator {
   }
 }
 
-class RGenerator private (
+class RGenerator private(
   sdk: AndroidSdk,
   manifest: File,
   sourceDestination: File) {
 
-  def generateFrom(resourceDirectories: Seq[File]): ProcessBuilder = {
+  def generateFrom(resourceDirectories: Seq[File]): ProcessRunner = {
     val dirs = resourceDirectories map
       (_.getAbsolutePath) flatMap
       (x => Seq("-S", x))
 
-    Process apply Seq(
+    ProcessRunner apply Seq(
       (sdk.buildTools / "aapt").getAbsolutePath, "package",
+      "--non-constant-id",
       "--auto-add-overlay",
       "-m", "-J", sourceDestination.getAbsolutePath,
       "-M", manifest.getAbsolutePath,

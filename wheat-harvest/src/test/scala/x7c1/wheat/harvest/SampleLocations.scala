@@ -1,13 +1,12 @@
 package x7c1.wheat.harvest
 
-import java.io.File
-
+import sbt.{file, richFile}
 import x7c1.wheat.harvest.layout.LayoutLocations
 import x7c1.wheat.harvest.values.ValuesLocations
 
 object SampleLocations {
 
-  def packages = WheatPackages(
+  def packages = Packages(
     starter = "x7c1.wheat.sample",
     starterLayout = "x7c1.wheat.sample.res.layout",
     starterValues = "x7c1.wheat.sample.res.values",
@@ -15,18 +14,18 @@ object SampleLocations {
     glueValues = "x7c1.wheat.sample.glue.res.values"
   )
 
-  def directories = WheatDirectories(
-    starter = new File("sample-starter"),
-    glue = new File("sample-glue")
+  def directories = Directories(
+    starter = file("sample-project") / "sample-starter",
+    glue = file("sample-project") / "sample-glue"
   )
 
-  def layout = LayoutLocations(
+  def layout = LayoutLocations(HarvestLocations(
     packages = packages,
     directories = directories
-  )
+  ))
 
-  def values = ValuesLocations(
+  def values = ValuesLocations(HarvestLocations(
     packages = packages,
     directories = directories
-  )
+  ))
 }

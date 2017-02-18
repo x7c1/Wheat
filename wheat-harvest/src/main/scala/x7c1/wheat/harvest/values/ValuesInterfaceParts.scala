@@ -1,6 +1,6 @@
 package x7c1.wheat.harvest.values
 
-import x7c1.wheat.harvest.{ResourceParts, Indent, ParsedResource, ResourcePartsFactory, WheatPackages, ResourcePrefix}
+import x7c1.wheat.harvest.{ResourceParts, Indent, ParsedResource, ResourcePartsFactory, Packages, ResourcePrefix}
 
 trait ValuesInterfaceParts extends ResourceParts {
   def declarePackage: String
@@ -8,7 +8,7 @@ trait ValuesInterfaceParts extends ResourceParts {
   def methods: String
 }
 
-class ValuesInterfacePartsFactory(packages: WheatPackages)
+class ValuesInterfacePartsFactory(packages: Packages)
   extends ResourcePartsFactory[ValuesInterfaceParts]{
 
   override def createFrom(values: ParsedResource): ValuesInterfaceParts = {
@@ -16,7 +16,7 @@ class ValuesInterfacePartsFactory(packages: WheatPackages)
   }
 }
 
-private class ValuesInterfacePartsImpl(packages: WheatPackages, values: ParsedResource)
+private class ValuesInterfacePartsImpl(packages: Packages, values: ParsedResource)
   extends ValuesInterfaceParts with Indent {
 
   override def declarePackage: String = s"package ${packages.glueValues};"

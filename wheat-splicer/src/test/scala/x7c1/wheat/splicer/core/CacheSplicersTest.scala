@@ -1,7 +1,7 @@
 package x7c1.wheat.splicer.core
 
 import org.scalatest.{BeforeAndAfterAll, FlatSpecLike, Matchers}
-import sbt.{file, globFilter, richFile, singleFileFinder}
+import sbt.{IO, file, globFilter, richFile, singleFileFinder}
 import x7c1.wheat.splicer.android.AndroidSdk
 import x7c1.wheat.splicer.android.PropertyLoader.{buildToolsVersion, compileSdkVersion, dependencies, sdkRoot}
 import x7c1.wheat.splicer.core.logger.Logging
@@ -55,16 +55,27 @@ class CacheSplicersTest extends FlatSpecLike
     actualPaths should containAllOf(expected map (_.absolutePath))
   }
 
+  "R.java" should "not have static final primitive values" in {
+    val file = unmanaged /
+      "recyclerview-v7/src-generated/android/support/v7/recyclerview/R.java"
+
+    val line = IO.readLines(file).
+      find(_ contains "layoutManager").
+      getOrElse(fail("layoutManager not contained"))
+
+    line shouldNot include("static final int")
+    line should include("static int")
+  }
 }
 
 trait SplicerSettings {
-  val project = file("./sample-splicer-client")
+  val project = file("./sample-project")
   val sdk = AndroidSdk(
     sdkRoot = sdkRoot via (project / "local.properties"),
     buildToolsVersion = buildToolsVersion fromResource "/build.gradle",
     compileSdkVersion = compileSdkVersion fromResource "/build.gradle"
   )
-  val unmanaged = (project / "libs-expanded").getCanonicalFile
+  val unmanaged = (project / "sample-android-jars" / "libs-expanded").getCanonicalFile
   val splicers = {
     val factory = new CacheSplicers.Factory(unmanaged, sdk)
     factory create (dependencies fromResource "/target.gradle")

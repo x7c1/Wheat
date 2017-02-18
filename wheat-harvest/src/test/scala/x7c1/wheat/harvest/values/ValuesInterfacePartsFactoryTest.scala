@@ -78,7 +78,7 @@ class ValuesSourcesFactoryTest extends FlatSpecLike with Matchers {
     s1.code should include("Boolean isExperiment();")
 
     s1.file.getPath shouldBe
-      "sample-glue/src/main/java/x7c1/wheat/sample/glue/res/values/CommentValues.java"
+      "sample-project/sample-glue/src/main/java/x7c1/wheat/sample/glue/res/values/CommentValues.java"
   }
   it can "generate java class source" in {
     val Right(resource) = loader.load("comment.xml")
@@ -90,6 +90,6 @@ class ValuesSourcesFactoryTest extends FlatSpecLike with Matchers {
     s1.code should include("public Boolean isExperiment(){")
 
     s1.file.getPath shouldBe
-      "sample-starter/src/main/java/x7c1/wheat/sample/res/values/CommentValuesProvider.java"
+      "sample-project/sample-starter/src/main/java/x7c1/wheat/sample/res/values/CommentValuesProvider.java"
   }
 }

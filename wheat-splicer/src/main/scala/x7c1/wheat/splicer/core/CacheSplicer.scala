@@ -2,23 +2,22 @@ package x7c1.wheat.splicer.core
 
 import sbt.Def.Classpath
 import sbt.Path.richFile
-import sbt.{File, PathFinder, ProcessLogger, globFilter, singleFileFinder}
+import sbt.{File, PathFinder, globFilter, singleFileFinder}
 import x7c1.wheat.splicer.android.{AndroidSdk, RGenerator}
 import x7c1.wheat.splicer.core.CacheSplicerError.{NotFound, Propagated}
 import x7c1.wheat.splicer.lib.Extractor.==>
 import x7c1.wheat.splicer.lib.LogMessage.{Error, Info}
-import x7c1.wheat.splicer.lib.Reader.LogReader
-import x7c1.wheat.splicer.lib.{ArchiveExtractor, Extractor, FileCleaner, HasLogMessage, Reader}
+import x7c1.wheat.splicer.lib.{ArchiveExtractor, Extractor, FileCleaner, HasLogMessage, HasProcessLogger, Reader}
 import x7c1.wheat.splicer.maven.{AarCache, ArchiveCache, ArchiveCacheTraverser, JarCache}
 
 
 sealed trait CacheSplicer {
 
-  def setupJars: Reader[ProcessLogger, Unit]
+  def setupJars: Reader[HasProcessLogger, Unit]
 
-  def setupSources: Reader[ProcessLogger, Unit]
+  def setupSources: Reader[HasProcessLogger, Unit]
 
-  def clean: Reader[ProcessLogger, Unit]
+  def clean: Reader[HasProcessLogger, Unit]
 
   def loadClasspath: Classpath
 
@@ -73,12 +72,12 @@ class AarCacheExpander(
   }
 
   override def setupJars = {
-    val setup = LogReader(logger => for {
+    val setup = () => for {
       _ <- mkdirs(destination).right
-      extractor <- Right(ArchiveExtractor(destination)).right
     } yield {
-      extractor.unzip(cache.file) !< logger
-    })
+      val extractor = ArchiveExtractor(destination)
+      extractor unzip cache.file
+    }
     implicit val toMessage = HasLogMessage[Int] {
       case 0 =>
         Info(s"[done] ${cache.moduleId} expanded -> $destination")
@@ -89,13 +88,13 @@ class AarCacheExpander(
   }
 
   override def setupSources = {
-    val setup = LogReader(logger => for {
+    val setup = () => for {
       _ <- mkdirs(sourceDestination).right
       dirs <- resourceDirectories.right
     } yield {
       val generator = RGenerator(sdk, manifest, sourceDestination)
-      generator.generateFrom(dirs) !< logger
-    })
+      generator generateFrom dirs
+    }
     implicit val toMessage = HasLogMessage[Int] {
       case 0 => (sourceDestination ** "*.java").get match {
         case files if files.nonEmpty =>
@@ -146,12 +145,12 @@ class JarCacheLoader(
   cacheDirectory: File,
   cache: JarCache) extends CacheSplicer {
 
-  override def setupJars = Reader { logger =>
-    logger info s"[done] skipped: ${cache.moduleId} jar found: ${cache.file}"
+  override def setupJars = Reader { context =>
+    context.logger info s"[done] skipped: ${cache.moduleId} jar found: ${cache.file}"
   }
 
-  override def setupSources = Reader { logger =>
-    logger info s"[done] skipped: no source to generate: ${cache.file.name}"
+  override def setupSources = Reader { context =>
+    context.logger info s"[done] skipped: no source to generate: ${cache.file.name}"
   }
 
   override def loadClasspath: Classpath = {
@@ -160,7 +159,8 @@ class JarCacheLoader(
 
   override def sourceDirectories = Seq()
 
-  override def clean = Reader { logger =>
+  override def clean = Reader { context =>
+    val logger = context.logger
     logger info s"[done] skipped: no files to clean: ${cache.moduleId}"
   }
 }

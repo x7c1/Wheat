@@ -1,13 +1,13 @@
 package x7c1.wheat.harvest.layout
 
-import x7c1.wheat.harvest.{Indent, ParsedResource, ResourceParts, ResourcePartsFactory, ResourcePrefix, WheatPackages}
+import x7c1.wheat.harvest.{Indent, ParsedResource, ResourceParts, ResourcePartsFactory, ResourcePrefix, Packages}
 
 trait ViewHolderParentParts extends ResourceParts {
   def declarePackage: String
   def imports: String
 }
 
-class ViewHolderParentPartsFactory (packages: WheatPackages)
+class ViewHolderParentPartsFactory (packages: Packages)
   extends ResourcePartsFactory[ViewHolderParentParts] {
 
   override def createFrom(resource: ParsedResource): ViewHolderParentParts = {
@@ -15,7 +15,7 @@ class ViewHolderParentPartsFactory (packages: WheatPackages)
   }
 }
 
-private class ViewHolderParentPartsImpl(packages: WheatPackages, layout: ParsedResource)
+private class ViewHolderParentPartsImpl(packages: Packages, layout: ParsedResource)
   extends ViewHolderParentParts with Indent {
 
   override def declarePackage: String = s"package ${packages.glueLayout};"

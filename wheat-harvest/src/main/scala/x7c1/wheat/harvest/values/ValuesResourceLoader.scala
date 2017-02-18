@@ -1,7 +1,7 @@
 package x7c1.wheat.harvest.values
 
 import sbt._
-import x7c1.wheat.harvest.WheatParser.camelizeTail
+import x7c1.wheat.harvest.HarvestParser.camelizeTail
 import x7c1.wheat.harvest.{ParsedResourceElement, ResourceElementsLoader, ResourceLoader}
 
 import scala.xml.XML

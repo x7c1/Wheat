@@ -1,8 +1,8 @@
 *.class
 *.log
 
-sample-splicer-client/libs-expanded
-sample-splicer-client/local.properties
+sample-project/sample-android-jars/libs-expanded
+sample-project/local.properties
 
 # sbt specific
 .cache

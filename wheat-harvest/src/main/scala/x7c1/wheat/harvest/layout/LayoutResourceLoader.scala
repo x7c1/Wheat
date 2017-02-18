@@ -1,8 +1,8 @@
 package x7c1.wheat.harvest.layout
 
 import sbt._
-import x7c1.wheat.harvest.WheatParser.camelizeTail
-import x7c1.wheat.harvest.{WheatParserError, ParsedResourceElement, ResourceElementsLoader, ResourceLoader}
+import x7c1.wheat.harvest.HarvestParser.camelizeTail
+import x7c1.wheat.harvest.{HarvestParserError, ParsedResourceElement, ResourceElementsLoader, ResourceLoader}
 
 import scala.xml.{Elem, XML}
 
@@ -32,7 +32,7 @@ class LayoutElementsLoader(dir: File, fileName: String) extends ResourceElements
     }
     elements ++ include(xml)
   }
-  private def include(xml: Elem): List[Either[WheatParserError, ParsedResourceElement]] =
+  private def include(xml: Elem): List[Either[HarvestParserError, ParsedResourceElement]] =
     xml.descendant collect {
       case node if node.label == "include" =>
         node.attribute("layout").flatMap(_.headOption)

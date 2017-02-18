@@ -1,8 +1,7 @@
 package x7c1.wheat.splicer
 
 import sbt.Keys.{clean, streams, unmanagedBase, unmanagedJars, unmanagedSourceDirectories}
-import sbt.{Compile, Def, SettingsDefinition, richFile, settingKey, taskKey}
-
+import sbt.{Compile, Def, SettingKey, SettingsDefinition, TaskKey, settingKey, taskKey}
 import x7c1.wheat.splicer.SplicerKeys.{splicerClean, splicerDependencies, splicerExpand, splicerSdk}
 import x7c1.wheat.splicer.android.AndroidSdk
 import x7c1.wheat.splicer.core.CacheSplicers
@@ -10,13 +9,18 @@ import x7c1.wheat.splicer.core.CacheSplicers
 
 object SplicerKeys {
 
-  val splicerDependencies = settingKey[Seq[String]]("dependencies")
-
-  val splicerSdk = settingKey[AndroidSdk]("Android SDK")
-
-  val splicerExpand = taskKey[Unit]("expand archives according to dependencies")
-
-  val splicerClean = taskKey[Unit]("delete expanded files")
+  val splicerDependencies: SettingKey[Seq[String]] = {
+    settingKey("Dependencies for which splicerExpand runs")
+  }
+  val splicerSdk: SettingKey[AndroidSdk] = {
+    settingKey("Android SDK files to run splicerExpand")
+  }
+  val splicerExpand: TaskKey[Unit] = {
+    taskKey("Expands archives targeted by splicerDependencies")
+  }
+  val splicerClean: TaskKey[Unit] = {
+    taskKey("Deletes expanded files")
+  }
 }
 
 object SplicerSettings {

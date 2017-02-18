@@ -1,16 +1,16 @@
 package x7c1.wheat.harvest.layout
 
-import sbt._
-import x7c1.wheat.harvest.FilesGenerator
+import sbt.Def.Initialize
+import sbt.{Def, InputTask}
 import x7c1.wheat.harvest.layout.LayoutGenerator.locations
 
 object ViewHolderGenerator {
 
-  def task: Def.Initialize[InputTask[Unit]] = Def settingDyn generator.value.task
-
-  def generator = Def setting new FilesGenerator(
-    finder = locations.value.layoutSrc * "*.xml",
-    loader = new LayoutResourceLoader(locations.value.layoutSrc),
-    generator = new ViewHolderSourcesFactory(locations.value)
-  )
+  def task: Initialize[InputTask[Unit]] = Def settingDyn {
+    val generator = LayoutGenerator.from(
+      locations = locations.value,
+      factory = new ViewHolderSourcesFactory(locations.value)
+    )
+    generator.task
+  }
 }

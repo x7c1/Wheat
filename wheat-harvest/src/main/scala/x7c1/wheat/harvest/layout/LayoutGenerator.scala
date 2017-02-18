@@ -1,27 +1,38 @@
 package x7c1.wheat.harvest.layout
 
-import sbt._
-import x7c1.wheat.harvest.WheatSettings.{directories, packages, wheat}
-import x7c1.wheat.harvest.{FilesGenerator, WheatDirectories, WheatPackages}
+import sbt.Def.Initialize
+import sbt.{Def, File, InputTask, globFilter, richFile, singleFileFinder}
+import x7c1.wheat.harvest.HarvestSettings.harvestLocations
+import x7c1.wheat.harvest.{FilesGenerator, HarvestLocations, JavaSourcesFactory, Packages}
 
 object LayoutGenerator {
 
-  def task: Def.Initialize[InputTask[Unit]] = Def settingDyn generator.value.task
+  def task: Initialize[InputTask[Unit]] = Def settingDyn {
+    val generator = from(
+      locations = locations.value,
+      factory = new LayoutSourcesFactory(locations.value)
+    )
+    generator.task
+  }
 
-  def generator = Def setting new FilesGenerator(
-    finder = locations.value.layoutSrc * "*.xml",
-    loader = new LayoutResourceLoader(locations.value.layoutSrc),
-    generator = new LayoutSourcesFactory(locations.value)
-  )
-  def locations = Def setting LayoutLocations(
-    packages = (packages in wheat).value,
-    directories = (directories in wheat).value
-  )
+  def from(locations: LayoutLocations, factory: JavaSourcesFactory) =
+    new FilesGenerator(
+      finder = locations.layoutSrc * "*.xml",
+      loader = new LayoutResourceLoader(locations.layoutSrc),
+      generator = factory
+    )
+
+  def locations: Initialize[LayoutLocations] = {
+    Def setting LayoutLocations(harvestLocations.value)
+  }
 }
 
 case class LayoutLocations(
-  packages: WheatPackages,
-  directories: WheatDirectories){
+  locations: HarvestLocations) {
+
+  private val directories = locations.directories
+
+  val packages: Packages = locations.packages
 
   val layoutSrc: File = directories.starter / "src/main/res/layout"
 
@@ -33,16 +44,13 @@ case class LayoutLocations(
   }
 
   override def toString = {
-    val lines = Seq(
-      "(",
-      "  source",
-      "    layout => " + layoutSrc,
-      "  destinations",
-      "    holder => " + layoutDst,
-      "    provider => " + providerDst,
-      ")"
-    )
-    lines mkString "\n"
+    s"""(
+       |  source:
+       |    layout: $layoutSrc
+       |  destinations:
+       |    holder: $layoutDst
+       |    provider: $providerDst
+       |)
+     """.stripMargin
   }
-
 }

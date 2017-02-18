@@ -2,7 +2,7 @@ package x7c1.wheat.harvest.values
 
 import x7c1.wheat.harvest.values.MethodResolver.toMethod
 import x7c1.wheat.harvest.values.TypeResolver.toType
-import x7c1.wheat.harvest.{ParsedResourceElement, ResourcePrefix, Indent, ParsedResource, ResourcePartsFactory, WheatPackages, ResourceParts}
+import x7c1.wheat.harvest.{ParsedResourceElement, ResourcePrefix, Indent, ParsedResource, ResourcePartsFactory, Packages, ResourceParts}
 
 trait ValuesProviderParts extends ResourceParts {
   def declarePackage: String
@@ -15,7 +15,7 @@ trait ValuesProviderParts extends ResourceParts {
   def methods: String
 }
 
-class ValuesProviderPartsFactory(packages: WheatPackages)
+class ValuesProviderPartsFactory(packages: Packages)
   extends ResourcePartsFactory[ValuesProviderParts]{
 
   override def createFrom(resource: ParsedResource): ValuesProviderParts = {
@@ -23,7 +23,7 @@ class ValuesProviderPartsFactory(packages: WheatPackages)
   }
 }
 
-private class ValuesProviderPartsImpl(packages: WheatPackages, values: ParsedResource)
+private class ValuesProviderPartsImpl(packages: Packages, values: ParsedResource)
   extends ValuesProviderParts with Indent {
 
   override def prefix: ResourcePrefix = values.prefix

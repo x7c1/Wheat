@@ -34,9 +34,9 @@ class ResourceNameParserTest extends FlatSpecLike with Matchers {
 
   it should "fail to invalid file name" in {
      val Left(e0) = ResourceNameParser.readPrefix("0xyz_abcd_ef_ghi.xml")
-     e0 shouldBe a[WheatParserError]
+     e0 shouldBe a[HarvestParserError]
 
      val Left(e2) = ResourceNameParser.readPrefix("xyz_0abcd.xml")
-     e2 shouldBe a[WheatParserError]
+     e2 shouldBe a[HarvestParserError]
    }
  }
