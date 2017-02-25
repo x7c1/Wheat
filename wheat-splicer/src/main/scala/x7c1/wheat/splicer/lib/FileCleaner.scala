@@ -1,6 +1,8 @@
 package x7c1.wheat.splicer.lib
 
 import sbt.File
+import x7c1.chaff.process.HasProcessLogger
+import x7c1.chaff.reader.Reader
 
 
 object FileCleaner {

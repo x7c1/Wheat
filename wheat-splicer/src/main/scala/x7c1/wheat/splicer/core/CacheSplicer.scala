@@ -3,11 +3,13 @@ package x7c1.wheat.splicer.core
 import sbt.Def.Classpath
 import sbt.Path.richFile
 import sbt.{File, PathFinder, globFilter, singleFileFinder}
+import x7c1.chaff.process.LogMessage.{Error, Info}
+import x7c1.chaff.process.{HasLogMessage, HasProcessLogger}
+import x7c1.chaff.reader.Reader
 import x7c1.wheat.splicer.android.{AndroidSdk, RGenerator}
 import x7c1.wheat.splicer.core.CacheSplicerError.{NotFound, Propagated}
 import x7c1.wheat.splicer.lib.Extractor.==>
-import x7c1.wheat.splicer.lib.LogMessage.{Error, Info}
-import x7c1.wheat.splicer.lib.{ArchiveExtractor, Extractor, FileCleaner, HasLogMessage, HasProcessLogger, Reader}
+import x7c1.wheat.splicer.lib.{ArchiveExtractor, Extractor, FileCleaner}
 import x7c1.wheat.splicer.maven.{AarCache, ArchiveCache, ArchiveCacheTraverser, JarCache}
 
 
