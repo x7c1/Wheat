@@ -1,7 +1,7 @@
 package x7c1.wheat.splicer.android
 
 import sbt.{File, richFile}
-import x7c1.wheat.splicer.lib.ProcessRunner
+import x7c1.chaff.process.ProcessRunner
 
 object RGenerator {
   def apply(

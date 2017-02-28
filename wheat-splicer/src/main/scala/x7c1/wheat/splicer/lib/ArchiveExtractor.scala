@@ -1,6 +1,7 @@
 package x7c1.wheat.splicer.lib
 
 import sbt.File
+import x7c1.chaff.process.ProcessRunner
 
 object ArchiveExtractor {
   def apply(destination: File): ArchiveExtractor = {

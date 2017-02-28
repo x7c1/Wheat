@@ -1,8 +1,9 @@
 package x7c1.wheat.splicer.core
 
 import sbt.File
-import x7c1.wheat.splicer.lib.LogMessage.Error
-import x7c1.wheat.splicer.lib.{HasLogMessage, HasMessage, LogMessage}
+import x7c1.chaff.process.{HasLogMessage, LogMessage}
+import x7c1.chaff.process.LogMessage.Error
+import x7c1.wheat.splicer.lib.HasMessage
 
 
 sealed trait CacheSplicerError {

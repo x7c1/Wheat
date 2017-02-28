@@ -15,7 +15,6 @@ object WheatSettings {
   ))
 
   lazy val forPlugin = new SettingList(common ++
-    PublishLocalSnapshot.definition ++
     Seq(
       sbtPlugin := true,
       bintrayRepository := "sbt-plugins"
