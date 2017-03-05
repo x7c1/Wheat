@@ -1,6 +1,8 @@
+import WheatDecorators.RichResolvers
 import bintray.BintrayKeys.bintrayRepository
 import sbt.Def.SettingList
 import sbt.Keys._
+import sbt.Resolver.bintrayIvyRepo
 
 object WheatSettings {
 
@@ -17,7 +19,16 @@ object WheatSettings {
   lazy val forPlugin = new SettingList(common ++
     Seq(
       sbtPlugin := true,
-      bintrayRepository := "sbt-plugins"
+      bintrayRepository := "sbt-plugins",
+      resolvers := {
+        /*
+          remove warning "Multiple resolvers having different access mechanism"
+          caused by sbt-bintray(0.3.0) which automatically
+          sets resolvers := bintrayRepo("x7c1", "sbt-plugins").
+         */
+        resolvers.value overwriteBy bintrayIvyRepo("x7c1", "sbt-plugins")
+      }
     )
   )
+
 }
