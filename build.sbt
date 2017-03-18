@@ -20,7 +20,7 @@ lazy val `wheat-harvest` = project.
 
 lazy val `wheat-splicer` = project.
   settings(forPlugin).
-  settings(addSbtPlugin("x7c1" % "chaff-process" % "0.1.0")).
+  settings(addSbtPlugin("x7c1" % "chaff-process" % "0.1.1")).
   settings(
     libraryDependencies ++= forTests ++ Seq(
       logback % Test
